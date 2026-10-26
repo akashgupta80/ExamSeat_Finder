@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#f0f4f8">
+
+    <title>Exam Seat Finder</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+    <a href="#" class="brand">
+            <span class="logo">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </span>
+        <span class="brand-name">Exam Seat Finder</span>
+    </a>
+
+    <div class="header-actions">
+        <a href="#" class="feedback-link" id="openFeedback">
+            <i class="fa-regular fa-comment-dots"></i>
+            <span>Feedback</span>
+        </a>
+    </div>
+</header>
+
+<!-- ================= FEEDBACK MODAL ================= -->
+<div class="feedback-modal" id="feedbackModal" aria-hidden="true">
+    <div class="feedback-box" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle">
+
+        <button type="button" class="feedback-close" id="closeFeedback" aria-label="Close feedback">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <!-- FEEDBACK FORM VIEW -->
+        <div id="feedbackFormView">
+            <div class="feedback-header">
+                <div class="header-icon-box">
+                    <i class="fa-regular fa-comment-medical"></i>
+                </div>
+                <div>
+                    <h2 id="feedbackTitle">Share Your Feedback</h2>
+                    <p>Your suggestions help us improve the exam portal.</p>
+                </div>
+            </div>
+
+            <form id="feedbackForm">
+                <!-- RATING SECTION -->
+                <div class="form-section">
+                    <div class="section-label-bar">
+                        <label>
+                            RATING <span class="required-star">*</span>
+                        </label>
+                        <span id="ratingLabel" class="rating-status-text">Select rating</span>
+                    </div>
+
+                    <div class="star-rating-container" id="starRatingGroup">
+                        <input type="hidden" id="ratingInput" name="rating" required>
+
+                        <button type="button" class="star-btn" data-value="1" aria-label="1 star">
+                            <i class="fa-solid fa-star"></i>
+                        </button>
+                        <button type="button" class="star-btn" data-value="2" aria-label="2 stars">
+                            <i class="fa-solid fa-star"></i>
+                        </button>
+                        <button type="button" class="star-btn" data-value="3" aria-label="3 stars">
+                            <i class="fa-solid fa-star"></i>
+                        </button>
+                        <button type="button" class="star-btn" data-value="4" aria-label="4 stars">
+                            <i class="fa-solid fa-star"></i>
+                        </button>
+                        <button type="button" class="star-btn" data-value="5" aria-label="5 stars">
+                            <i class="fa-solid fa-star"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- COMMENTS SECTION -->
+                <div class="form-section">
+                    <label for="comment">
+                        COMMENTS <span class="required-star">*</span>
+                    </label>
+                    <div class="inset-input-box">
+                        <textarea id="comment" name="comment" placeholder="Share your suggestions..." required></textarea>
+                    </div>
+                </div>
+
+                <!-- OPTIONAL NAME SECTION -->
+                <div class="form-section">
+                    <label for="userName">
+                        NAME (OPTIONAL)
+                    </label>
+                    <div class="inset-input-box">
+                        <input type="text" id="userName" name="userName" placeholder="e.g. Your name" autocomplete="name">
+                    </div>
+                </div>
+
+                <!-- SUBMIT BUTTON -->
+                <button type="submit" class="feedback-submit">
+                    Submit Feedback
+                </button>
+
+                <p id="feedbackError" role="status" aria-live="polite"></p>
+            </form>
+        </div>
+
+        <!-- SUCCESS VIEW -->
+        <div id="feedbackSuccessView" class="feedback-success-view" hidden>
+            <div class="success-icon-box">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <h2>Thank You For Your Feedback! 😊</h2>
+            <p>
+                Your response has been successfully recorded and helps us improve the portal.
+            </p>
+
+            <button type="button" id="feedbackDoneBtn" class="btn-primary">
+                Done
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- ================= MAIN SECTION ================= -->
+<main class="main-container">
+
+    <!-- INITIAL SEARCH VIEW -->
+    <div id="searchView" class="view-section">
+        <div class="hero-section">
+            <h1 class="main-title">Find Your Seat</h1>
+
+            <div class="status-indicators">
+                <div class="badge-chip">
+                    <i class="fa-solid fa-chart-simple"></i>
+                    <strong id="visitorCount">--</strong>
+                    <span>total visitors</span>
+                </div>
+
+                <div class="badge-chip">
+                    <span class="online-pulse"></span>
+                    <strong>23</strong>
+                    <span>students online</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEARCH CARD -->
+        <section class="seat-search-card">
+            <form id="searchForm" class="search-form">
+                <div class="form-group">
+                    <label for="admissionNo" class="admission-label">
+                        ADMISSION NUMBER
+                    </label>
+                    <div class="input-container">
+                        <input
+                                type="text"
+                                id="admissionNo"
+                                name="admissionNo"
+                                class="input-field"
+                                placeholder="Enter your admission number"
+                                autocomplete="off"
+                                required
+                        >
+                    </div>
+                </div>
+
+                <button type="submit" id="searchButton" class="btn-primary">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Find My Seat</span>
+                </button>
+            </form>
+
+            <p id="message" class="message" role="status" aria-live="polite"></p>
+        </section>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboardView" class="view-section" hidden>
+        <div class="dashboard-nav">
+            <button type="button" id="searchAgainBtn" class="btn-secondary">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Search Again</span>
+            </button>
+
+            <div class="program-badge" id="programBadge">
+                Student Course
+            </div>
+        </div>
+
+        <!-- STUDENT PROFILE CARD -->
+        <div class="student-profile-card">
+            <div class="student-info-left">
+                <span class="student-label">STUDENT</span>
+                <h2 id="studentNameDisplay" class="student-name">--</h2>
+            </div>
+            <div class="student-admission-tag" id="admissionDisplay">
+                --
+            </div>
+        </div>
+
+        <!-- UPCOMING EXAMS SECTION -->
+        <section class="exams-container-section">
+            <div id="upcomingExamContainer"></div>
+        </section>
+
+        <!-- PAST EXAMS SECTION -->
+        <div class="past-exams-wrapper">
+            <button type="button" id="togglePastExams" class="past-exams-toggle" hidden>
+                <span>PAST EXAMS</span>
+                <i id="pastExamsIcon" class="fa-solid fa-chevron-up"></i>
+            </button>
+
+            <div id="pastExamsContainer" class="past-exams-list" hidden></div>
+        </div>
+    </div>
+
+    <!-- DISCLAIMER NOTICE -->
+    <p class="disclaimer-text">
+        Notice: Students are advised to verify their examination details against the latest official notification issued by the university.<br>
+        In the event of any discrepancy, the official university notification shall prevail.
+    </p>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+    <div class="developer-card-container">
+        <div class="footer-divider">
+            <span></span>
+            <p>DEVELOPED BY</p>
+            <span></span>
+        </div>
+
+        <div class="developer-cards">
+            <div class="dev-card">
+                <span class="dev-avatar">AK</span>
+                <span class="dev-name">Akash Kumar</span>
+                <a href="https://www.linkedin.com/in/akashkumar80" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">
+                    <i class="fa-brands fa-linkedin"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="project-info">
+            <p class="university-dept">
+                <i class="fa-solid fa-building-columns"></i>
+                Department of AI &amp; ML | Galgotias University
+            </p>
+        </div>
+    </div>
+
+    <!-- COPYRIGHT -->
+    <p class="copyright">
+        © 2026 Exam Seat Finder &bull;
+        <button type="button" id="disclaimerButton" class="text-btn">Disclaimer</button> &bull;
+        <a href="mailto:seatfinder.contact@gmail.com">Contact Us</a>
+    </p>
+</footer>
+
+<!-- ================= DISCLAIMER MODAL ================= -->
+<dialog id="disclaimerDialog" class="disclaimer-dialog">
+    <div class="dialog-content">
+        <button type="button" id="closeDisclaimer" class="close-dialog" aria-label="Close disclaimer">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <h2>
+            <i class="fa-solid fa-shield-halved"></i>
+            Disclaimer
+        </h2>
+
+        <p>
+            Exam Seat Finder is designed to help students quickly locate examination details.
+            All details should be verified against the official university notification.
+            In case of discrepancies, official university instructions take priority.
+        </p>
+
+        <button type="button" id="okDisclaimer" class="btn-primary">
+            Understood
+        </button>
+    </div>
+</dialog>
+
+</body>
+</html>
