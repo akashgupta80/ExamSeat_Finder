@@ -1,6 +1,5 @@
 const API_BASE_URL = "/api";
 
-/* ---------- HTML ELEMENTS ---------- */
 
 const searchView = document.getElementById("searchView");
 const dashboardView = document.getElementById("dashboardView");
