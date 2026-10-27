@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://examseat-finder.onrender.com/api";
+const API_BASE_URL = "/api";
 
 /* ---------- HTML ELEMENTS ---------- */
 
