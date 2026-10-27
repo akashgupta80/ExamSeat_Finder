@@ -1,4 +1,4 @@
-const API_BASE_URL = "/api";
+const API_BASE_URL = "http://localhost:8080/api";
 
 
 const searchView = document.getElementById("searchView");
@@ -44,8 +44,6 @@ const closeDisclaimer =
 const okDisclaimer =
     document.getElementById("okDisclaimer");
 
-
-/* ---------- SHIFT TIMINGS ---------- */
 
 const shiftTimings = {
     "1": "09:30 AM – 11:00 AM",
