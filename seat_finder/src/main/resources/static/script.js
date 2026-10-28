@@ -1,5 +1,20 @@
-const API_BASE_URL = "/api";
 
+const isLocalFrontend =
+    location.protocol === "file:" ||
+    (
+        ["localhost", "127.0.0.1"].includes(location.hostname) &&
+        location.port !== "8080"
+    );
+
+const API_BASE_URL = isLocalFrontend
+    ? "http://localhost:8080/api"
+    : "/api";
+
+console.log("Seat Finder API:", API_BASE_URL);
+
+
+
+/* ---------- ELEMENTS ---------- */
 
 const searchView = document.getElementById("searchView");
 const dashboardView = document.getElementById("dashboardView");
@@ -9,40 +24,25 @@ const searchButton = document.getElementById("searchButton");
 const message = document.getElementById("message");
 
 const visitorCount = document.getElementById("visitorCount");
+const onlineCount = document.getElementById("onlineCount");
+const onlineLabel = document.getElementById("onlineLabel");
 const searchAgainBtn = document.getElementById("searchAgainBtn");
 
-const studentNameDisplay =
-    document.getElementById("studentNameDisplay");
+const studentNameDisplay = document.getElementById("studentNameDisplay");
+const admissionDisplay = document.getElementById("admissionDisplay");
+const programBadge = document.getElementById("programBadge");
+const studentAvatar = document.getElementById("studentAvatar");
 
-const admissionDisplay =
-    document.getElementById("admissionDisplay");
+const upcomingExamContainer = document.getElementById("upcomingExamContainer");
+const pastExamsContainer = document.getElementById("pastExamsContainer");
+const togglePastExams = document.getElementById("togglePastExams");
+const upcomingCount = document.getElementById("upcomingCount");
+const pastCount = document.getElementById("pastCount");
 
-const programBadge =
-    document.getElementById("programBadge");
-
-const upcomingExamContainer =
-    document.getElementById("upcomingExamContainer");
-
-const pastExamsContainer =
-    document.getElementById("pastExamsContainer");
-
-const togglePastExams =
-    document.getElementById("togglePastExams");
-
-const pastExamsIcon =
-    document.getElementById("pastExamsIcon");
-
-const disclaimerButton =
-    document.getElementById("disclaimerButton");
-
-const disclaimerDialog =
-    document.getElementById("disclaimerDialog");
-
-const closeDisclaimer =
-    document.getElementById("closeDisclaimer");
-
-const okDisclaimer =
-    document.getElementById("okDisclaimer");
+const disclaimerButton = document.getElementById("disclaimerButton");
+const disclaimerDialog = document.getElementById("disclaimerDialog");
+const closeDisclaimer = document.getElementById("closeDisclaimer");
+const okDisclaimer = document.getElementById("okDisclaimer");
 
 
 const shiftTimings = {
@@ -57,95 +57,50 @@ const shiftTimings = {
 
 // Supports 3, "3", "Shift 3", and "shift-3".
 function getShiftNumber(shift) {
-
-    const value = String(shift ?? "").trim();
-    const match = value.match(/\d+/);
-
-    if (match && shiftTimings[match[0]]) {
-        return match[0];
-    }
-
-    return null;
+    const match = String(shift ?? "").trim().match(/\d+/);
+    return match && shiftTimings[match[0]] ? match[0] : null;
 }
-
 
 function formatShift(shift) {
-
     const number = getShiftNumber(shift);
-
-    return number
-        ? `Shift ${number}`
-        : (shift || "Not available");
+    return number ? `Shift ${number}` : (shift || "Not available");
 }
 
-
 function getExamTime(shift) {
-
     const number = getShiftNumber(shift);
-
-    return number
-        ? shiftTimings[number]
-        : "Timing unavailable";
+    return number ? shiftTimings[number] : "Timing unavailable";
 }
 
 
 /* ---------- DATE HELPERS ---------- */
 
-// Get today's date in the computer's local timezone.
+// Today's date in the device's local timezone (YYYY-MM-DD).
 function getTodayString() {
-
     const today = new Date();
-
     const year = today.getFullYear();
-
-    const month = String(
-        today.getMonth() + 1
-    ).padStart(2, "0");
-
-    const day = String(
-        today.getDate()
-    ).padStart(2, "0");
-
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
 }
 
-
-// Normalize dates to YYYY-MM-DD.
 function normalizeDate(dateValue) {
-
-    if (!dateValue) {
-        return "";
-    }
-
-    return String(dateValue).substring(0, 10);
+    return dateValue ? String(dateValue).substring(0, 10) : "";
 }
 
-
-// Format 2026-10-25 as 25 Oct 2026.
+// 2026-10-25 -> 25 Oct 2026
 function formatDate(dateValue) {
-
     const dateString = normalizeDate(dateValue);
-
-    const match =
-        dateString.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})$/);
 
     if (!match) {
-        return dateValue
-            ? String(dateValue)
-            : "Not available";
+        return dateValue ? String(dateValue) : "Not available";
     }
 
     const year = Number(match[1]);
     const month = Number(match[2]);
     const day = Number(match[3]);
+    const date = new Date(year, month - 1, day);
 
-    const date = new Date(
-        year,
-        month - 1,
-        day
-    );
-
-    // Reject invalid calendar dates.
     if (
         date.getFullYear() !== year ||
         date.getMonth() !== month - 1 ||
@@ -165,264 +120,140 @@ function formatDate(dateValue) {
 /* ---------- MESSAGE HELPER ---------- */
 
 function showMessage(text, type = "info") {
-
-    if (!message) {
-        return;
-    }
-
+    if (!message) return;
     message.textContent = text;
     message.className = `message ${type}`;
     message.hidden = !text;
 }
 
 
-/* ---------- SAFE HTML ELEMENT CREATION ---------- */
+/* ---------- SAFE ELEMENT HELPERS (no innerHTML with data) ---------- */
 
-function createTextElement(
-    tag,
-    text,
-    className = ""
-) {
-
-    const element =
-        document.createElement(tag);
+function createTextElement(tag, text, className = "") {
+    const element = document.createElement(tag);
 
     element.textContent =
-        text === null ||
-        text === undefined ||
-        text === ""
+        text === null || text === undefined || text === ""
             ? "Not available"
             : String(text);
 
-    if (className) {
-        element.className = className;
-    }
-
+    if (className) element.className = className;
     return element;
+}
+
+function createIcon(classes) {
+    const icon = document.createElement("i");
+    icon.className = classes;
+    icon.setAttribute("aria-hidden", "true");
+    return icon;
 }
 
 
 /* ---------- PROGRAM BADGE ---------- */
 
 function updateProgramBadge(record) {
+    if (!programBadge) return;
 
-    if (!programBadge) {
-        return;
-    }
-
-    const details = [
-        record.program,
-        record.semester,
-        record.section
-    ]
-        .filter(value =>
-            value !== null &&
-            value !== undefined &&
-            String(value).trim() !== ""
-        )
-        .map(value =>
-            String(value).trim()
-        );
+    const details = [record.program, record.semester, record.section]
+        .filter(v => v !== null && v !== undefined && String(v).trim() !== "")
+        .map(v => String(v).trim());
 
     programBadge.textContent =
-        details.length > 0
-            ? details.join(" | ")
-            : "Program details unavailable";
+        details.length > 0 ? details.join(" | ") : "Program details unavailable";
 }
 
 
-/* ---------- CREATE EXAM CARD ---------- */
+/* =========================================================
+   EXAM CARD (ticket layout)
+   ========================================================= */
 
-function createExamCard(
-    record,
-    isPast = false
-) {
+// Big Room / Seat cell
+function createCell(iconClasses, label, value, variant) {
+    const cell = document.createElement("div");
+    cell.className = `seat-cell ${variant}`;
 
-    const card =
-        document.createElement("article");
+    const labelRow = document.createElement("span");
+    labelRow.className = "cell-label";
+    labelRow.append(createIcon(iconClasses), label);
 
-    card.className =
-        "exam-result-card";
+    cell.append(labelRow, createTextElement("strong", value, "cell-value"));
+    return cell;
+}
 
+// Course code / Shift row
+function createDetail(iconClasses, label, value, sub = "") {
+    const item = document.createElement("div");
+    item.className = "detail";
 
-    /* Card Header */
+    const iconBox = document.createElement("span");
+    iconBox.className = "detail-icon";
+    iconBox.appendChild(createIcon(iconClasses));
 
-    const headerDiv =
-        document.createElement("div");
-
-    headerDiv.className =
-        "exam-card-header";
-
-    const typeSpan =
-        createTextElement(
-            "span",
-            isPast
-                ? "COMPLETED EXAM"
-                : "UPCOMING EXAM"
-        );
-
-    const dateSpan =
-        createTextElement(
-            "span",
-            formatDate(record.examDate)
-        );
-
-    headerDiv.append(
-        typeSpan,
-        dateSpan
+    const text = document.createElement("div");
+    text.className = "detail-text";
+    text.append(
+        createTextElement("span", label, "detail-label"),
+        createTextElement("strong", value, "detail-value")
     );
 
-    card.appendChild(headerDiv);
+    if (sub) {
+        text.appendChild(createTextElement("span", sub, "detail-sub"));
+    }
 
+    item.append(iconBox, text);
+    return item;
+}
+
+function createExamCard(record, isPast = false) {
+    const card = document.createElement("article");
+    card.className = isPast
+        ? "exam-card ticket is-past"
+        : "exam-card ticket is-upcoming";
+
+    /* Header */
+    const header = document.createElement("div");
+    header.className = "exam-card-header";
+
+    const status = document.createElement("span");
+    status.className = "status-chip";
+    status.append(
+        createIcon(isPast ? "fa-solid fa-circle-check" : "fa-solid fa-circle-dot"),
+        isPast ? "Completed exam" : "Upcoming exam"
+    );
+
+    header.append(
+        status,
+        createTextElement("span", formatDate(record.examDate), "exam-date")
+    );
+    card.appendChild(header);
 
     /* Room and Seat */
-
-    const topGrid =
-        document.createElement("div");
-
-    topGrid.className =
-        "exam-grid-top";
-
-
-    const roomBox =
-        document.createElement("div");
-
-    roomBox.className =
-        "recessed-box";
-
-    roomBox.appendChild(
-        createTextElement(
-            "span",
-            "ROOM"
-        )
-    );
-
-    roomBox.appendChild(
-        createTextElement(
-            "strong",
-            record.roomNo || "N/A"
-        )
-    );
-
-
-    const seatBox =
-        document.createElement("div");
-
-    seatBox.className =
-        "recessed-box seat-box";
-
-    seatBox.appendChild(
-        createTextElement(
-            "span",
-            "SEAT"
-        )
-    );
-
-    seatBox.appendChild(
-        createTextElement(
-            "strong",
-            record.seatNo || "N/A"
-        )
-    );
-
-
+    const topGrid = document.createElement("div");
+    topGrid.className = "exam-grid-top";
     topGrid.append(
-        roomBox,
-        seatBox
+        createCell("fa-solid fa-building", "Room", record.roomNo || "N/A", "cell-room"),
+        createCell("fa-solid fa-chair", "Seat", record.seatNo || "N/A", "cell-seat")
     );
-
     card.appendChild(topGrid);
 
+    /* Divider (decoration) */
+    const divider = document.createElement("div");
+    divider.className = "ticket-divider";
+    divider.setAttribute("aria-hidden", "true");
+    card.appendChild(divider);
 
-    /* Course, Date and Shift */
-
-    const bottomGrid =
-        document.createElement("div");
-
-    bottomGrid.className =
-        "exam-grid-bottom";
-
-
-    // Course code
-    const coursePill =
-        document.createElement("div");
-
-    coursePill.className =
-        "info-pill";
-
-    coursePill.appendChild(
-        createTextElement(
-            "span",
-            "COURSE CODE"
-        )
-    );
-
-    coursePill.appendChild(
-        createTextElement(
-            "strong",
-            record.courseCode || "N/A"
-        )
-    );
-
-
-    // Date
-    const datePill =
-        document.createElement("div");
-
-    datePill.className =
-        "info-pill";
-
-    datePill.appendChild(
-        createTextElement(
-            "span",
-            "DATE"
-        )
-    );
-
-    datePill.appendChild(
-        createTextElement(
-            "strong",
-            formatDate(record.examDate)
-        )
-    );
-
-
-    // Shift and timing
-    const shiftPill =
-        document.createElement("div");
-
-    shiftPill.className =
-        "info-pill";
-
-    shiftPill.appendChild(
-        createTextElement(
-            "span",
-            "SHIFT & TIMING"
-        )
-    );
-
-    const shiftNumber =
-        getShiftNumber(record.shift);
-
-    const shiftText =
-        shiftNumber
-            ? `${formatShift(record.shift)} (${getExamTime(record.shift)})`
-            : formatShift(record.shift);
-
-    shiftPill.appendChild(
-        createTextElement(
-            "strong",
-            shiftText
-        )
-    );
-
-
+    /* Course code and Shift */
+    const bottomGrid = document.createElement("div");
+    bottomGrid.className = "exam-grid-bottom";
     bottomGrid.append(
-        coursePill,
-        datePill,
-        shiftPill
+        createDetail("fa-solid fa-book-open", "Course code", record.courseCode || "N/A"),
+        createDetail(
+            "fa-solid fa-clock",
+            "Shift",
+            formatShift(record.shift),
+            getShiftNumber(record.shift) ? getExamTime(record.shift) : ""
+        )
     );
-
     card.appendChild(bottomGrid);
 
     return card;
@@ -432,138 +263,240 @@ function createExamCard(
 /* ---------- NO UPCOMING EXAMS CARD ---------- */
 
 function renderNoUpcomingExamsCard() {
+    const wrapper = document.createElement("div");
+    wrapper.className = "empty-exam-card";
 
-    const wrapper =
-        document.createElement("div");
-
-    wrapper.className =
-        "empty-exam-card";
-
-
-    const iconBox =
-        document.createElement("div");
-
-    iconBox.className =
-        "empty-icon-box";
-
-
-    const icon =
-        document.createElement("i");
-
-    icon.className =
-        "fa-regular fa-calendar-days";
-
-    icon.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-    iconBox.appendChild(icon);
-
-
-    const heading =
-        createTextElement(
-            "h3",
-            "No Upcoming Examinations"
-        );
-
-
-    const description =
-        createTextElement(
-            "p",
-            "No examinations are currently scheduled. Your examination details will appear here once the university publishes the official schedule."
-        );
-
+    const iconBox = document.createElement("div");
+    iconBox.className = "empty-icon-box";
+    iconBox.appendChild(createIcon("fa-regular fa-calendar-days"));
 
     wrapper.append(
         iconBox,
-        heading,
-        description
+        createTextElement("h3", "No Upcoming Examinations"),
+        createTextElement(
+            "p",
+            "No examinations are currently scheduled. Your examination details will appear here once the university publishes the official schedule."
+        )
     );
 
     return wrapper;
 }
 
 
-/* ---------- VISITOR COUNTER ---------- */
+/* ---------- AVATAR + COUNTS ---------- */
 
-// Fetching the count does not increment it.
-async function loadVisitorCount() {
+function syncDashboardUi() {
+    if (studentAvatar && studentNameDisplay) {
+        const parts = studentNameDisplay.textContent
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean);
 
-    if (!visitorCount) {
-        return;
+        studentAvatar.textContent =
+            parts.length === 0
+                ? "?"
+                : (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
     }
 
-    try {
+    const upcomingTotal = upcomingExamContainer
+        ? upcomingExamContainer.querySelectorAll(".exam-card").length
+        : 0;
 
-        const response =
-            await fetch(
-                `${API_BASE_URL}/visitors`
-            );
+    const pastTotal = pastExamsContainer
+        ? pastExamsContainer.querySelectorAll(".exam-card").length
+        : 0;
 
-        if (!response.ok) {
-            throw new Error(
-                "Visitor API unavailable"
-            );
-        }
+    if (upcomingCount) {
+        upcomingCount.textContent = String(upcomingTotal);
+        upcomingCount.hidden = upcomingTotal === 0;
+    }
 
-        const data =
-            await response.json();
-
-        const count =
-            typeof data === "number"
-                ? data
-                : data.totalVisitors ??
-                  data.visitorCount ??
-                  data.count;
-
-        visitorCount.textContent =
-            count !== undefined &&
-            count !== null &&
-            Number.isFinite(Number(count))
-                ? Number(count).toLocaleString("en-IN")
-                : "--";
-
-    } catch (error) {
-
-        visitorCount.textContent = "--";
-
-        console.warn(
-            "Visitor count unavailable:",
-            error.message
-        );
+    if (pastCount) {
+        pastCount.textContent = String(pastTotal);
     }
 }
 
 
-// Increment only after a successful search with records.
-async function recordSuccessfulSearch() {
+/* =========================================================
+   VISITOR COUNTER + LIVE "STUDENTS ONLINE"
+*/
+
+const HEARTBEAT_MS = 15000;
+let memoryVisitorId = null;     // fallback if localStorage is blocked
+
+
+function generateId() {
+    if (window.crypto && typeof crypto.randomUUID === "function") {
+        return crypto.randomUUID();
+    }
+
+    const bytes = new Uint8Array(16);
+
+    if (window.crypto && crypto.getRandomValues) {
+        crypto.getRandomValues(bytes);
+    } else {
+        for (let i = 0; i < bytes.length; i++) {
+            bytes[i] = Math.floor(Math.random() * 256);
+        }
+    }
+
+    return Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("");
+}
+
+
+function getVisitorId() {
+    const KEY = "seatFinderVisitorId";
+    const VALID = /^[A-Za-z0-9-]{8,64}$/;
 
     try {
+        let id = localStorage.getItem(KEY);
 
-        const response =
-            await fetch(
-                `${API_BASE_URL}/visitors/visit`,
-                {
-                    method: "POST"
-                }
-            );
-
-        if (!response.ok) {
-            throw new Error(
-                "Unable to update visitor count"
-            );
+        if (!id || !VALID.test(id)) {
+            id = generateId();
+            localStorage.setItem(KEY, id);
         }
 
-        await loadVisitorCount();
+        return id;
 
     } catch (error) {
-
-        console.warn(
-            "Visitor count update failed:",
-            error.message
-        );
+        if (!memoryVisitorId) memoryVisitorId = generateId();
+        return memoryVisitorId;
     }
+}
+
+const VISITOR_ID = getVisitorId();
+
+
+async function postJson(path, body) {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+
+    return response.json();
+}
+
+
+function showVisitorTotal(count) {
+    if (!visitorCount) return;
+
+    visitorCount.textContent =
+        count !== undefined && count !== null && Number.isFinite(Number(count))
+            ? Number(count).toLocaleString("en-IN")
+            : "--";
+}
+
+
+function showOnlineTotal(count) {
+    if (!onlineCount) return;
+
+    const valid =
+        count !== undefined && count !== null && Number.isFinite(Number(count));
+
+    onlineCount.textContent = valid ? String(Number(count)) : "--";
+
+    if (onlineLabel && valid) {
+        onlineLabel.textContent =
+            Number(count) === 1 ? "student online" : "students online";
+    }
+}
+
+
+// Read-only: fetching never increments.
+async function loadVisitorCount() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/visitors`);
+        if (!response.ok) throw new Error("Visitor API unavailable");
+
+        const data = await response.json();
+
+        showVisitorTotal(
+            typeof data === "number"
+                ? data
+                : data.totalVisitors ?? data.visitorCount ?? data.count
+        );
+
+    } catch (error) {
+        showVisitorTotal(null);
+        console.warn("Visitor count unavailable:", error.message);
+    }
+}
+
+
+// Runs once per page load. The server ignores ids it already knows.
+// Counts one page visit whenever the website is opened or refreshed.
+async function registerVisit() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/visitors/visit`, {
+            method: "POST"
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        showVisitorTotal(data.totalVisitors);
+
+    } catch (error) {
+        console.warn("Visit registration failed:", error.message);
+        await loadVisitorCount();
+    }
+}
+
+
+// Keeps this browser in the "online" list (skipped while the tab is hidden).
+async function sendHeartbeat() {
+    if (document.hidden) return;
+
+    try {
+        const data = await postJson("/visitors/online", { sessionId: VISITOR_ID });
+        showOnlineTotal(data.studentsOnline);
+    } catch (error) {
+        showOnlineTotal(null);
+        console.warn("Online heartbeat failed:", error.message);
+    }
+}
+
+
+function leaveSite() {
+    try {
+        navigator.sendBeacon(
+            `${API_BASE_URL}/visitors/offline`,
+            new Blob(
+                [JSON.stringify({ sessionId: VISITOR_ID })],
+                { type: "application/json" }
+            )
+        );
+    } catch (error) {
+        /* nothing to do – the server times the session out anyway */
+    }
+}
+
+
+function startTracking() {
+    registerVisit();
+    sendHeartbeat();
+
+    setInterval(sendHeartbeat, HEARTBEAT_MS);
+
+    // Tab becomes visible again -> refresh immediately
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) sendHeartbeat();
+    });
+
+    // Coming back from the browser's back/forward cache
+    window.addEventListener("pageshow", event => {
+        if (event.persisted) sendHeartbeat();
+    });
+
+    // Tab / browser closed
+    window.addEventListener("pagehide", leaveSite);
 }
 
 
@@ -571,484 +504,229 @@ async function recordSuccessfulSearch() {
 
 let isPastExamsOpen = false;
 
+function setPastExamsOpen(open) {
+    isPastExamsOpen = open;
 
-function resetPastExamsAccordion() {
+    if (pastExamsContainer) pastExamsContainer.hidden = !open;
 
-    isPastExamsOpen = false;
-
-    if (pastExamsContainer) {
-        pastExamsContainer.hidden = true;
+    // CSS rotates the chevron from aria-expanded (no class swapping needed)
+    if (togglePastExams) {
+        togglePastExams.setAttribute("aria-expanded", String(open));
     }
+}
 
-    if (pastExamsIcon) {
-        pastExamsIcon.className =
-            "fa-solid fa-chevron-up";
-    }
+if (togglePastExams) {
+    togglePastExams.addEventListener("click", () => {
+        setPastExamsOpen(!isPastExamsOpen);
+    });
 }
 
 
 /* ---------- SEARCH FORM ---------- */
 
+function dateKey(record) {
+    return normalizeDate(record.examDate);
+}
+
+function shiftKey(record) {
+    return getShiftNumber(record.shift) || "9";
+}
+
 if (searchForm) {
+    searchForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-    searchForm.addEventListener(
-        "submit",
-        async function (event) {
+        if (searchButton.disabled) return;     // ignore double clicks
 
-            event.preventDefault();
+        const admissionNo = admissionInput.value.trim();
 
-            const admissionNo =
-                admissionInput.value.trim();
+        if (!admissionNo) {
+            showMessage("Please enter your admission number.", "error");
+            admissionInput.focus();
+            return;
+        }
 
+        setPastExamsOpen(false);
 
-            if (!admissionNo) {
+        searchButton.disabled = true;
+        searchButton.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> <span>Searching...</span>';
 
+        showMessage("Searching for your examination details...", "info");
+
+        try {
+            const response = await fetch(
+                `${API_BASE_URL}/exam-seats?admissionNo=${encodeURIComponent(admissionNo)}`
+            );
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error("Admission number not found.");
+                }
+                if (response.status === 400) {
+                    throw new Error("Please enter a valid admission number.");
+                }
+                throw new Error("Unable to search right now. Please try again.");
+            }
+
+            const records = await response.json();
+
+            if (!Array.isArray(records) || records.length === 0) {
                 showMessage(
-                    "Please enter your admission number.",
+                    "No examination records found. Please check your admission number.",
                     "error"
                 );
-
-                admissionInput.focus();
-
                 return;
             }
 
-
-            // Reset old results and accordion state.
-            resetPastExamsAccordion();
-
-
-            searchButton.disabled = true;
-
-            searchButton.innerHTML =
-                '<i class="fa-solid fa-spinner fa-spin"></i> ' +
-                '<span>Searching...</span>';
-
-
-            showMessage(
-                "Searching for your examination details...",
-                "info"
-            );
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `${API_BASE_URL}/exam-seats/${encodeURIComponent(admissionNo)}`
-                    );
-
-
-                if (!response.ok) {
-
-                    if (response.status === 404) {
-
-                        throw new Error(
-                            "Admission number not found."
-                        );
-                    }
-
-                    throw new Error(
-                        "Unable to search right now. Please try again."
-                    );
-                }
-
-
-                const records =
-                    await response.json();
-
-
-                if (
-                    !Array.isArray(records) ||
-                    records.length === 0
-                ) {
-
-                    showMessage(
-                        "No examination records found. Please check your admission number.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                /* Student Information */
-
-                const firstRecord =
-                    records[0];
-
-
-                if (studentNameDisplay) {
-
-                    studentNameDisplay.textContent =
-                        firstRecord.studentName ||
-                        "Student Details";
-                }
-
-
-                if (admissionDisplay) {
-
-                    admissionDisplay.textContent =
-                        firstRecord.admissionNo ||
-                        admissionNo;
-                }
-
-
-                updateProgramBadge(
-                    firstRecord
-                );
-
-
-                /* Separate Upcoming and Completed Exams */
-
-                const todayStr =
-                    getTodayString();
-
-
-                const upcomingExams =
-                    records
-                        .filter(record => {
-
-                            const examDate =
-                                normalizeDate(
-                                    record.examDate
-                                );
-
-                            return (
-                                examDate &&
-                                examDate >= todayStr
-                            );
-                        })
-                        .sort((a, b) =>
-                            normalizeDate(
-                                a.examDate
-                            ).localeCompare(
-                                normalizeDate(
-                                    b.examDate
-                                )
-                            )
-                        );
-
-
-                const pastExams =
-                    records
-                        .filter(record => {
-
-                            const examDate =
-                                normalizeDate(
-                                    record.examDate
-                                );
-
-                            return (
-                                examDate &&
-                                examDate < todayStr
-                            );
-                        })
-                        .sort((a, b) =>
-                            normalizeDate(
-                                b.examDate
-                            ).localeCompare(
-                                normalizeDate(
-                                    a.examDate
-                                )
-                            )
-                        );
-
-
-                /* Clear Previous Results */
-
-                if (upcomingExamContainer) {
-                    upcomingExamContainer.replaceChildren();
-                }
-
-                if (pastExamsContainer) {
-                    pastExamsContainer.replaceChildren();
-                }
-
-
-                /* Render Upcoming Exams */
-
-                if (upcomingExamContainer) {
-
-                    if (upcomingExams.length > 0) {
-
-                        upcomingExams.forEach(
-                            record => {
-
-                                upcomingExamContainer.appendChild(
-                                    createExamCard(
-                                        record,
-                                        false
-                                    )
-                                );
-                            }
-                        );
-
-                    } else {
-
-                        upcomingExamContainer.appendChild(
-                            renderNoUpcomingExamsCard()
-                        );
-                    }
-                }
-
-
-                /* Render Completed Exams */
-
-                if (pastExams.length > 0) {
-
-                    if (pastExamsContainer) {
-
-                        pastExams.forEach(
-                            record => {
-
-                                pastExamsContainer.appendChild(
-                                    createExamCard(
-                                        record,
-                                        true
-                                    )
-                                );
-                            }
-                        );
-                    }
-
-
-                    if (togglePastExams) {
-
-                        togglePastExams.hidden = false;
-                        togglePastExams.style.display =
-                            "flex";
-                    }
-
-                } else {
-
-                    if (togglePastExams) {
-
-                        togglePastExams.hidden = true;
-                        togglePastExams.style.display =
-                            "none";
-                    }
-                }
-
-
-                /* Show Dashboard */
-
-                if (searchView) {
-                    searchView.hidden = true;
-                }
-
-                if (dashboardView) {
-                    dashboardView.hidden = false;
-                }
-
-
-                showMessage("");
-
-
-                window.scrollTo({
-                    top: 0,
-                    behavior: "smooth"
-                });
-
-
-                // Count only successful searches returning records.
-                await recordSuccessfulSearch();
-
-
-            } catch (error) {
-
-                console.error(
-                    "Search error:",
-                    error
-                );
-
-
-                if (
-                    error instanceof TypeError ||
-                    error.message.includes("Failed to fetch")
-                ) {
-
-                    showMessage(
-                        "Cannot connect to the server. Please make sure Spring Boot is running.",
-                        "error"
-                    );
-
-                } else {
-
-                    showMessage(
-                        error.message,
-                        "error"
-                    );
-                }
-
-
-            } finally {
-
-                searchButton.disabled = false;
-
-                searchButton.innerHTML =
-                    '<i class="fa-solid fa-magnifying-glass"></i> ' +
-                    '<span>Find My Seat</span>';
-            }
-        }
-    );
-}
-
-
-/* ---------- SEARCH AGAIN BUTTON ---------- */
-
-if (searchAgainBtn) {
-
-    searchAgainBtn.addEventListener(
-        "click",
-        function () {
-
-            if (dashboardView) {
-                dashboardView.hidden = true;
-            }
-
-            if (searchView) {
-                searchView.hidden = false;
-            }
-
-
-            if (admissionInput) {
-                admissionInput.value = "";
-            }
-
-
-            if (upcomingExamContainer) {
-                upcomingExamContainer.replaceChildren();
-            }
-
-            if (pastExamsContainer) {
-                pastExamsContainer.replaceChildren();
-            }
-
-
-            if (programBadge) {
-                programBadge.textContent =
-                    "Student Program";
-            }
+            /* Student information */
+            const firstRecord = records[0];
 
             if (studentNameDisplay) {
-                studentNameDisplay.textContent = "";
+                studentNameDisplay.textContent =
+                    firstRecord.studentName || "Student Details";
             }
 
             if (admissionDisplay) {
-                admissionDisplay.textContent = "";
+                admissionDisplay.textContent =
+                    firstRecord.admissionNo || admissionNo;
             }
 
+            updateProgramBadge(firstRecord);
 
-            resetPastExamsAccordion();
+            /* Upcoming vs completed.
+               FIX: records with no exam date used to disappear completely;
+               they now show under Upcoming (at the end). */
+            const todayStr = getTodayString();
 
+            const upcomingExams = records
+                .filter(r => !dateKey(r) || dateKey(r) >= todayStr)
+                .sort((a, b) =>
+                    (dateKey(a) || "9999-99-99").localeCompare(dateKey(b) || "9999-99-99") ||
+                    shiftKey(a).localeCompare(shiftKey(b))
+                );
+
+            const pastExams = records
+                .filter(r => dateKey(r) && dateKey(r) < todayStr)
+                .sort((a, b) =>
+                    dateKey(b).localeCompare(dateKey(a)) ||
+                    shiftKey(a).localeCompare(shiftKey(b))
+                );
+
+            if (upcomingExamContainer) upcomingExamContainer.replaceChildren();
+            if (pastExamsContainer) pastExamsContainer.replaceChildren();
+
+            if (upcomingExamContainer) {
+                if (upcomingExams.length > 0) {
+                    upcomingExams.forEach(r =>
+                        upcomingExamContainer.appendChild(createExamCard(r, false))
+                    );
+                } else {
+                    upcomingExamContainer.appendChild(renderNoUpcomingExamsCard());
+                }
+            }
+
+            if (togglePastExams) {
+                togglePastExams.hidden = pastExams.length === 0;
+            }
+
+            if (pastExamsContainer) {
+                pastExams.forEach(r =>
+                    pastExamsContainer.appendChild(createExamCard(r, true))
+                );
+            }
+
+            /* Show dashboard */
+            if (searchView) searchView.hidden = true;
+            if (dashboardView) dashboardView.hidden = false;
+
+            syncDashboardUi();
             showMessage("");
 
+            window.scrollTo({ top: 0, behavior: "smooth" });
 
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
+            // NOTE: no visitor counting here any more.
 
+        } catch (error) {
+            console.error("Search error:", error);
 
-            if (admissionInput) {
-                admissionInput.focus();
+            if (
+                error instanceof TypeError ||
+                String(error.message).includes("Failed to fetch")
+            ) {
+                showMessage(
+                    "Cannot connect to the server. Please make sure the server is running.",
+                    "error"
+                );
+            } else {
+                showMessage(error.message, "error");
             }
+
+        } finally {
+            searchButton.disabled = false;
+            searchButton.innerHTML =
+                '<i class="fa-solid fa-magnifying-glass"></i> <span>Find My Seat</span>';
         }
-    );
+    });
 }
 
 
-/* ---------- TOGGLE PAST EXAMS ---------- */
+/* ---------- SEARCH AGAIN ---------- */
 
-if (togglePastExams) {
+if (searchAgainBtn) {
+    searchAgainBtn.addEventListener("click", function () {
+        if (dashboardView) dashboardView.hidden = true;
+        if (searchView) searchView.hidden = false;
 
-    togglePastExams.addEventListener(
-        "click",
-        function () {
+        if (admissionInput) admissionInput.value = "";
 
-            isPastExamsOpen =
-                !isPastExamsOpen;
+        if (upcomingExamContainer) upcomingExamContainer.replaceChildren();
+        if (pastExamsContainer) pastExamsContainer.replaceChildren();
 
+        if (togglePastExams) togglePastExams.hidden = true;
 
-            if (pastExamsContainer) {
+        if (programBadge) programBadge.textContent = "Student Program";
+        if (studentNameDisplay) studentNameDisplay.textContent = "";
+        if (admissionDisplay) admissionDisplay.textContent = "";
 
-                pastExamsContainer.hidden =
-                    !isPastExamsOpen;
-            }
+        setPastExamsOpen(false);
+        syncDashboardUi();
+        showMessage("");
 
+        window.scrollTo({ top: 0, behavior: "smooth" });
 
-            if (pastExamsIcon) {
-
-                pastExamsIcon.className =
-                    isPastExamsOpen
-                        ? "fa-solid fa-chevron-down"
-                        : "fa-solid fa-chevron-up";
-            }
-        }
-    );
+        if (admissionInput) admissionInput.focus();
+    });
 }
 
 
 /* ---------- DISCLAIMER MODAL ---------- */
 
-if (
-    disclaimerButton &&
-    disclaimerDialog
-) {
-
-    disclaimerButton.addEventListener(
-        "click",
-        function () {
-            disclaimerDialog.showModal();
-        }
-    );
+if (disclaimerButton && disclaimerDialog) {
+    disclaimerButton.addEventListener("click", () => disclaimerDialog.showModal());
 }
-
 
 if (closeDisclaimer && disclaimerDialog) {
-
-    closeDisclaimer.addEventListener(
-        "click",
-        function () {
-            disclaimerDialog.close();
-        }
-    );
+    closeDisclaimer.addEventListener("click", () => disclaimerDialog.close());
 }
-
 
 if (okDisclaimer && disclaimerDialog) {
-
-    okDisclaimer.addEventListener(
-        "click",
-        function () {
-            disclaimerDialog.close();
-        }
-    );
+    okDisclaimer.addEventListener("click", () => disclaimerDialog.close());
 }
 
-
-// Close when the user clicks outside the dialog content.
+// Click on the dark backdrop closes it.
 if (disclaimerDialog) {
-
-    disclaimerDialog.addEventListener(
-        "click",
-        function (event) {
-
-            if (event.target === disclaimerDialog) {
-                disclaimerDialog.close();
-            }
-        }
-    );
+    disclaimerDialog.addEventListener("click", event => {
+        if (event.target === disclaimerDialog) disclaimerDialog.close();
+    });
 }
+
 
 /* =========================================================
    FEEDBACK MODAL
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
-
-    /* ---------- ELEMENTS ---------- */
 
     const feedbackModal = document.getElementById("feedbackModal");
     const openFeedback = document.getElementById("openFeedback");
@@ -1062,23 +740,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const ratingInput = document.getElementById("ratingInput");
     const ratingLabel = document.getElementById("ratingLabel");
 
-    // Updated IDs from the corrected HTML
     const commentInput = document.getElementById("comment");
     const userNameInput = document.getElementById("userName");
     const feedbackError = document.getElementById("feedbackError");
 
-    // Category section is currently commented out in HTML
-    const categoryInput = document.getElementById("categoryInput");
-
     const stars = document.querySelectorAll(".star-btn");
-    const categoryPills = document.querySelectorAll(".category-pill");
 
     if (!feedbackModal || !openFeedback || !feedbackForm) {
         console.error("Feedback modal: required HTML elements are missing.");
         return;
     }
 
-    /* ---------- ERROR MESSAGE ---------- */
+    let resetTimer = null;
 
     function showFeedbackError(text, color = "#dc2626") {
         if (feedbackError) {
@@ -1091,10 +764,11 @@ document.addEventListener("DOMContentLoaded", function () {
         showFeedbackError("");
     }
 
-    /* ---------- OPEN MODAL ---------- */
-
     function openFeedbackPopup(event) {
         if (event) event.preventDefault();
+
+        // FIX: cancel a pending reset so it cannot wipe a form that was just reopened
+        window.clearTimeout(resetTimer);
 
         if (feedbackFormView) feedbackFormView.hidden = false;
         if (feedbackSuccessView) feedbackSuccessView.hidden = true;
@@ -1107,66 +781,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
     openFeedback.addEventListener("click", openFeedbackPopup);
 
-    /* ---------- RESET FORM ---------- */
-
     function resetFeedbackForm() {
         feedbackForm.reset();
 
         if (ratingInput) ratingInput.value = "";
         if (ratingLabel) ratingLabel.textContent = "Select rating";
 
-        stars.forEach(star => {
-            star.classList.remove("active", "hover");
-        });
-
-        categoryPills.forEach(pill => {
-            pill.classList.remove("active");
-        });
-
-        // Only set a category if the category section exists
-        if (categoryInput && categoryPills.length > 0) {
-            categoryPills[0].classList.add("active");
-            categoryInput.value =
-                categoryPills[0].getAttribute("data-value") || "";
-        }
+        stars.forEach(star => star.classList.remove("active", "hover"));
 
         clearFeedbackError();
     }
-
-    /* ---------- CLOSE MODAL ---------- */
 
     function closeFeedbackPopup() {
         feedbackModal.classList.remove("show");
         feedbackModal.setAttribute("aria-hidden", "true");
 
-        // Reset after the closing animation
-        window.setTimeout(() => {
+        window.clearTimeout(resetTimer);
+        resetTimer = window.setTimeout(() => {
             if (feedbackFormView) feedbackFormView.hidden = false;
             if (feedbackSuccessView) feedbackSuccessView.hidden = true;
-
             resetFeedbackForm();
         }, 200);
     }
 
-    if (closeFeedback) {
-        closeFeedback.addEventListener("click", closeFeedbackPopup);
-    }
-
-    if (feedbackDoneBtn) {
-        feedbackDoneBtn.addEventListener("click", closeFeedbackPopup);
-    }
+    if (closeFeedback) closeFeedback.addEventListener("click", closeFeedbackPopup);
+    if (feedbackDoneBtn) feedbackDoneBtn.addEventListener("click", closeFeedbackPopup);
 
     feedbackModal.addEventListener("click", event => {
-        if (event.target === feedbackModal) {
-            closeFeedbackPopup();
-        }
+        if (event.target === feedbackModal) closeFeedbackPopup();
     });
 
     document.addEventListener("keydown", event => {
-        if (
-            event.key === "Escape" &&
-            feedbackModal.classList.contains("show")
-        ) {
+        if (event.key === "Escape" && feedbackModal.classList.contains("show")) {
             closeFeedbackPopup();
         }
     });
@@ -1185,9 +831,7 @@ document.addEventListener("DOMContentLoaded", function () {
         star.addEventListener("click", () => {
             const value = Number(star.getAttribute("data-value"));
 
-            if (!Number.isInteger(value) || value < 1 || value > 5) {
-                return;
-            }
+            if (!Number.isInteger(value) || value < 1 || value > 5) return;
 
             if (ratingInput) ratingInput.value = String(value);
             if (ratingLabel) ratingLabel.textContent = ratingTexts[value];
@@ -1214,63 +858,34 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    /* ---------- CATEGORY PILLS (OPTIONAL) ---------- */
-
-    if (categoryInput && categoryPills.length > 0) {
-        categoryPills[0].classList.add("active");
-        categoryInput.value =
-            categoryPills[0].getAttribute("data-value") || "";
-
-        categoryPills.forEach(pill => {
-            pill.addEventListener("click", () => {
-                categoryPills.forEach(item => {
-                    item.classList.remove("active");
-                });
-
-                pill.classList.add("active");
-                categoryInput.value =
-                    pill.getAttribute("data-value") || "";
-
-                clearFeedbackError();
-            });
-        });
-    }
-
     /* ---------- SUBMIT FEEDBACK ---------- */
 
     feedbackForm.addEventListener("submit", async event => {
         event.preventDefault();
 
-        const submitButton =
-            feedbackForm.querySelector(".feedback-submit");
+        const submitButton = feedbackForm.querySelector(".feedback-submit");
 
-        // Read values from the correct HTML IDs
+        if (submitButton && submitButton.disabled) return;   // no double submit
+
         const rating = Number(ratingInput?.value || 0);
         const comment = String(commentInput?.value ?? "").trim();
         const userName = String(userNameInput?.value ?? "").trim();
 
-        // Validate rating
-        if (!ratingInput?.value || rating < 1 || rating > 5) {
+        if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
             showFeedbackError("Please select a rating.");
             return;
         }
 
-        // Validate comments
         if (!comment) {
             showFeedbackError("Please enter your comments.");
             commentInput?.focus();
             return;
         }
 
-        // Category is optional in the UI.
-        // "General" provides a non-empty value if the backend requires it.
-        const category =
-            String(categoryInput?.value ?? "").trim() || "General";
-
         const feedback = {
-            rating: Number(ratingInput.value),
-            comment: commentInput.value.trim(),
-            name: (userNameInput.value || "").trim() || null
+            rating,
+            comment,
+            name: userName || null
         };
 
         if (submitButton) {
@@ -1283,9 +898,7 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const response = await fetch(`${API_BASE_URL}/feedback`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(feedback)
             });
 
@@ -1297,21 +910,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     response: errorText
                 });
 
-                throw new Error(
-                    `Server returned ${response.status}. ${errorText}`
-                );
+                throw new Error(`Server returned ${response.status}.`);
             }
 
-            // Show success only after the server accepts the feedback
             if (feedbackFormView) feedbackFormView.hidden = true;
             if (feedbackSuccessView) feedbackSuccessView.hidden = false;
 
         } catch (error) {
             console.error("Feedback submission failed:", error);
-
-            showFeedbackError(
-                "Unable to submit feedback. Please try again."
-            );
+            showFeedbackError("Unable to submit feedback. Please try again.");
 
         } finally {
             if (submitButton) {
@@ -1320,12 +927,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
-
 });
 
 
-
-
 /* ---------- INITIAL PAGE LOAD ---------- */
-
 loadVisitorCount();
+startTracking();

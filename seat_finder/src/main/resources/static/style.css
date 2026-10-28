@@ -1,16 +1,32 @@
+/* =========================================================
+   EXAM SEAT FINDER – STYLES
+   ========================================================= */
 
 :root {
     --primary: #5856d6;
     --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
     --primary-dark: #312e81;
+    --accent: #4f46e5;              /* theme blue used for all icons */
+    --room-color: #4f46e5;          /* room number colour (blue) */
+    --seat-color: #059669;          /* seat number colour (green) */
     --bg-main: #f0f4f8;
-    --card-bg: #f8fafc;
-    --card-inner: #ffffff;
+    --card-bg: #f1f5f9;
+    --card-inner: #f1f5f9;
     --text-primary: #1e293b;
     --text-muted: #64748b;
+    --text-soft: #94a3b8;
     --border-light: #e2e8f0;
     --success: #10b981;
     --danger: #ef4444;
+
+    /* Reusable neumorphic shadows */
+    --shadow-card: 0 16px 35px rgba(148, 163, 184, 0.16),
+                   0 1px 3px rgba(148, 163, 184, 0.10);
+    --shadow-raised: 0 4px 14px rgba(148, 163, 184, 0.14);
+    --shadow-inset: inset 3px 3px 6px rgba(203, 213, 225, 0.8),
+                    inset -3px -3px 6px rgba(255, 255, 255, 0.9);
+    --shadow-inset-sm: inset 2px 2px 5px rgba(203, 213, 225, 0.75),
+                       inset -2px -2px 5px rgba(255, 255, 255, 0.9);
 }
 
 * {
@@ -37,7 +53,16 @@ body {
         radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.08) 0px, transparent 50%);
     overflow-x: hidden;
 }
-/* Header */
+
+:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
 .header {
     width: 100%;
     padding: 18px 5%;
@@ -60,7 +85,7 @@ body {
     display: grid;
     place-items: center;
     border-radius: 12px;
-    color: white;
+    color: #fff;
     font-size: 16px;
     background: var(--primary-gradient);
     box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25);
@@ -77,13 +102,13 @@ body {
     align-items: center;
     gap: 6px;
     color: var(--text-primary);
-    background: #ffffff;
+    background: var(--card-bg);
     padding: 8px 14px;
     border-radius: 12px;
     text-decoration: none;
     font-size: 13px;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(148, 163, 184, 0.12);
+    box-shadow: var(--shadow-raised);
     transition: transform 0.2s ease;
 }
 
@@ -91,7 +116,10 @@ body {
     transform: translateY(-2px);
 }
 
-/* Main Layout & Hero */
+/* =========================================================
+   MAIN LAYOUT & HERO
+   ========================================================= */
+
 .main-container {
     flex: 1;
     width: 100%;
@@ -117,7 +145,7 @@ body {
 
 .main-title {
     color: var(--text-primary);
-    font-size: clamp(26px, 7vw, 42px);
+    font-size: clamp(28px, 7vw, 44px);
     font-weight: 800;
     letter-spacing: -0.8px;
     margin-bottom: 12px;
@@ -128,7 +156,7 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
     flex-wrap: wrap;
     justify-content: center;
 }
@@ -137,12 +165,12 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: #ffffff;
+    background: var(--card-bg);
     padding: 6px 14px;
     border-radius: 20px;
     font-size: 12px;
     color: var(--text-muted);
-    box-shadow: 0 2px 8px rgba(148, 163, 184, 0.1);
+    box-shadow: var(--shadow-raised);
 }
 
 .badge-chip i {
@@ -162,14 +190,16 @@ body {
     box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
-/* Neumorphic Search Card */
+/* =========================================================
+   SEARCH CARD
+   ========================================================= */
+
 .seat-search-card {
     width: 100%;
     background: var(--card-bg);
-    padding: 28px 20px;
-    border-radius: 22px;
-    box-shadow: 0 16px 32px rgba(148, 163, 184, 0.15),
-                0 1px 3px rgba(148, 163, 184, 0.1);
+    padding: 28px 22px;
+    border-radius: 24px;
+    box-shadow: var(--shadow-card);
     text-align: left;
 }
 
@@ -178,37 +208,47 @@ body {
 }
 
 .admission-label {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 7px;
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.05em;
     color: #334155;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+.admission-label i {
+    color: var(--accent);
+    font-size: 14px;
 }
 
 .input-field {
     width: 100%;
-    height: 52px;
-    padding: 0 16px;
-    font-size: 16px;
-    color: #475569;
-    background-color: #f1f5f9;
-    border: none;
-    border-radius: 12px;
-    box-shadow: inset 2px 2px 5px rgba(203, 213, 225, 0.8),
-                inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+    height: 58px;
+    padding: 0 20px;
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+    background-color: var(--card-inner);
+    border: 2px solid transparent;
+    border-radius: 14px;
+    box-shadow: var(--shadow-inset);
     outline: none;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input-field::placeholder {
-    color: #94a3b8;
-    font-size: 14px;
+    color: var(--text-soft);
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0;
 }
 
 .input-field:focus {
-    box-shadow: inset 3px 3px 6px rgba(203, 213, 225, 0.9),
-                inset -3px -3px 6px rgba(255, 255, 255, 0.9);
+    border-color: rgba(99, 102, 241, 0.45);
 }
 
 .btn-primary {
@@ -217,17 +257,21 @@ body {
     justify-content: center;
     gap: 10px;
     width: 100%;
-    min-height: 52px;
+    min-height: 54px;
     padding: 14px;
     font-size: 1rem;
     font-weight: 600;
-    color: #ffffff;
+    color: #fff;
     background: var(--primary-gradient);
     border: none;
-    border-radius: 14px;
+    border-radius: 16px;
     cursor: pointer;
     box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
     transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 10px 24px rgba(79, 70, 229, 0.38);
 }
 
 .btn-primary:active {
@@ -243,7 +287,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #ffffff;
+    background: var(--card-bg);
     border: none;
     padding: 10px 18px;
     border-radius: 14px;
@@ -251,47 +295,74 @@ body {
     font-weight: 650;
     color: var(--text-primary);
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(148, 163, 184, 0.12);
+    box-shadow: var(--shadow-raised);
     transition: transform 0.2s ease;
+}
+
+.btn-secondary i {
+    color: var(--primary);
 }
 
 .btn-secondary:hover {
     transform: translateY(-2px);
 }
 
-/* Dashboard Results View Layout */
+/* =========================================================
+   DASHBOARD – NAV & PROFILE
+   ========================================================= */
+
 .dashboard-nav {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     gap: 10px;
     flex-wrap: wrap;
 }
 
 .program-badge {
-    background: #ffffff;
-    padding: 10px 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card-bg);
+    padding: 10px 16px;
     border-radius: 14px;
     font-size: 13px;
     font-weight: 650;
     color: var(--primary);
-    box-shadow: 0 4px 14px rgba(148, 163, 184, 0.12);
+    box-shadow: var(--shadow-raised);
 }
 
-/* Student Profile Card */
 .student-profile-card {
     width: 100%;
     background: var(--card-bg);
-    padding: 22px 24px;
-    border-radius: 20px;
-    box-shadow: 0 12px 30px rgba(148, 163, 184, 0.12);
+    padding: 20px 22px;
+    border-radius: 24px;
+    box-shadow: var(--shadow-card);
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 22px;
-    gap: 15px;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.student-avatar {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 800;
+    background: var(--primary-gradient);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.28);
+}
+
+.student-info-left {
+    flex: 1;
+    min-width: 0;
 }
 
 .student-label {
@@ -306,49 +377,266 @@ body {
     font-weight: 800;
     color: var(--text-primary);
     margin-top: 2px;
+    overflow-wrap: anywhere;
 }
 
 .student-admission-tag {
-    background: #ffffff;
-    padding: 8px 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card-inner);
+    padding: 9px 16px;
     border-radius: 14px;
     font-size: 13px;
     font-weight: 700;
     color: var(--primary);
-    box-shadow: inset 2px 2px 4px rgba(203, 213, 225, 0.5),
-                inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+    box-shadow: var(--shadow-inset-sm);
 }
 
-/* Exams Container */
+.student-admission-tag i {
+    color: var(--accent);
+}
+
+/* =========================================================
+   SECTION HEADINGS & COUNT CHIPS
+   ========================================================= */
+
 .exams-container-section {
+    width: 100%;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 4px 14px;
+}
+
+.section-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.section-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    background: var(--card-bg);
+    color: var(--accent);
+    font-size: 15px;
+    box-shadow: var(--shadow-raised);
+}
+
+.count-chip {
+    min-width: 26px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--card-inner);
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 800;
+    text-align: center;
+    box-shadow: var(--shadow-inset-sm);
+}
+
+/* =========================================================
+   EXAM LIST & EXAM CARD
+   ========================================================= */
+
+.exam-list {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 18px;
 }
 
-/* No Upcoming Exams State Card */
+.exam-list[hidden] {
+    display: none;
+}
+
+.exam-card {
+    width: 100%;
+    background: var(--card-bg);
+    padding: 22px;
+    border-radius: 26px;
+    box-shadow: var(--shadow-card);
+}
+
+/* Card header: status on the left, date on the right */
+.exam-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.exam-card-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: var(--text-soft);
+}
+
+.exam-card.is-upcoming .status-chip {
+    color: var(--primary);
+}
+
+.status-chip i {
+    font-size: 11px;
+}
+
+.when-chip {
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--primary);
+    background: var(--card-inner);
+    box-shadow: var(--shadow-inset-sm);
+}
+
+.when-chip.is-today {
+    color: #fff;
+    background: var(--primary-gradient);
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+}
+
+.exam-date {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-soft);
+}
+
+/* ROOM & SEAT – two big inset boxes */
+.exam-grid-top {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.recessed-box {
+    background: var(--card-inner);
+    padding: 18px 12px 20px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: var(--shadow-inset);
+}
+
+.box-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-bottom: 4px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+}
+
+.box-value {
+    display: block;
+    font-size: clamp(26px, 6.5vw, 36px);
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--text-primary);
+    overflow-wrap: anywhere;
+}
+
+/* COURSE / DATE / SHIFT – icon pills */
+.exam-grid-bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 1.3fr);
+    gap: 12px;
+}
+
+.info-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--card-inner);
+    border-radius: 18px;
+    box-shadow: var(--shadow-inset);
+}
+
+.pill-icon {
+    flex-shrink: 0;
+    font-size: 19px;
+    color: var(--accent);
+}
+
+.pill-text {
+    min-width: 0;
+}
+
+.pill-label {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--text-soft);
+}
+
+.pill-value {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.35;
+    color: var(--text-primary);
+    overflow-wrap: anywhere;
+}
+
+/* Completed cards: same layout, slightly quieter */
+.exam-card.is-past .pill-value {
+    color: #475569;
+}
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
 .empty-exam-card {
     width: 100%;
     background: var(--card-bg);
-    padding: 50px 20px;
-    border-radius: 24px;
-    box-shadow: 0 16px 35px rgba(148, 163, 184, 0.12);
+    padding: 44px 22px;
+    border-radius: 26px;
+    box-shadow: var(--shadow-card);
     text-align: center;
 }
 
 .empty-icon-box {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     margin: 0 auto 16px;
     display: grid;
     place-items: center;
-    background: #f1f5f9;
-    border-radius: 16px;
-    color: var(--primary);
-    font-size: 24px;
-    box-shadow: inset 2px 2px 5px rgba(203, 213, 225, 0.8),
-                inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+    background: var(--card-inner);
+    border-radius: 20px;
+    color: var(--accent);
+    font-size: 26px;
+    box-shadow: var(--shadow-inset);
 }
 
 .empty-exam-card h3 {
@@ -366,94 +654,13 @@ body {
     line-height: 1.6;
 }
 
-/* Active / Upcoming Exam Result Card Style */
-.exam-result-card {
-    width: 100%;
-    background: var(--card-bg);
-    padding: 24px;
-    border-radius: 22px;
-    box-shadow: 0 16px 35px rgba(148, 163, 184, 0.12);
-    margin-bottom: 20px;
-}
+/* =========================================================
+   PAST EXAMS TOGGLE
+   ========================================================= */
 
-.exam-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 18px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
-}
-
-.exam-grid-top {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 16px;
-}
-
-.recessed-box {
-    background: var(--card-inner);
-    padding: 20px 16px;
-    border-radius: 16px;
-    text-align: center;
-    box-shadow: inset 3px 3px 6px rgba(203, 213, 225, 0.7),
-                inset -3px -3px 6px rgba(255, 255, 255, 0.8);
-}
-
-.recessed-box span {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-muted);
-    margin-bottom: 4px;
-    letter-spacing: 0.05em;
-}
-
-.recessed-box strong {
-    font-size: clamp(22px, 5vw, 28px);
-    font-weight: 800;
-    color: var(--primary-dark);
-}
-
-.recessed-box.seat-box strong {
-    color: #0d9488;
-}
-
-.exam-grid-bottom {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.info-pill {
-    background: var(--card-inner);
-    padding: 14px 12px;
-    border-radius: 14px;
-    box-shadow: 0 4px 12px rgba(148, 163, 184, 0.06);
-    border: 1px solid var(--border-light);
-}
-
-.info-pill span {
-    display: block;
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--text-muted);
-    margin-bottom: 4px;
-}
-
-.info-pill strong {
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-/* Past Exams Toggle Divider */
 .past-exams-wrapper {
     width: 100%;
-    margin-top: 15px;
+    margin-top: 18px;
 }
 
 .past-exams-toggle {
@@ -464,13 +671,16 @@ body {
     gap: 10px;
     background: transparent;
     border: none;
-    padding: 15px 0;
+    padding: 14px 0;
     cursor: pointer;
     font-size: 12px;
     font-weight: 750;
     letter-spacing: 1px;
     color: var(--primary);
-    position: relative;
+}
+
+.past-exams-toggle[hidden] {
+    display: none;
 }
 
 .past-exams-toggle::before,
@@ -481,19 +691,22 @@ body {
     background: #cbd5e1;
 }
 
+.past-exams-toggle i {
+    transition: transform 0.25s ease;
+}
+
+.past-exams-toggle[aria-expanded="true"] i {
+    transform: rotate(180deg);
+}
+
 .past-exams-list {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
     margin-top: 10px;
 }
 
-.past-exams-list[hidden] {
-    display: none;
-}
+/* =========================================================
+   MESSAGES & DISCLAIMER TEXT
+   ========================================================= */
 
-/* Messages */
 .message {
     min-height: 20px;
     margin-top: 14px;
@@ -506,22 +719,13 @@ body {
     display: none;
 }
 
-.message.success {
-    color: var(--success);
-}
+.message.success { color: var(--success); }
+.message.error   { color: var(--danger); }
+.message.info    { color: #6366f1; }
 
-.message.error {
-    color: var(--danger);
-}
-
-.message.info {
-    color: #6366f1;
-}
-
-/* Disclaimer text */
 .disclaimer-text {
     max-width: 600px;
-    margin: 25px auto 0;
+    margin: 28px auto 0;
     color: #718096;
     text-align: center;
     font-size: 11px;
@@ -529,7 +733,10 @@ body {
     padding: 0 8px;
 }
 
-/* Footer Styling */
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
 .footer {
     padding: 24px 16px;
     text-align: center;
@@ -539,12 +746,11 @@ body {
 .developer-card-container {
     width: 100%;
     max-width: 650px;
-    margin: 0 auto 20px auto;
-    background: #f8fafc;
+    margin: 0 auto 20px;
+    background: var(--card-bg);
     padding: 25px 20px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(148, 163, 184, 0.12);
-    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    box-shadow: var(--shadow-card);
 }
 
 .footer-divider {
@@ -562,7 +768,7 @@ body {
 }
 
 .footer-divider p {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 1.2px;
@@ -579,18 +785,17 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #ffffff;
+    background: var(--card-inner);
     padding: 10px 18px;
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(148, 163, 184, 0.1);
-    border: 1px solid #f1f5f9;
+    box-shadow: var(--shadow-inset-sm);
 }
 
 .dev-avatar {
     width: 32px;
     height: 32px;
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
-    color: #ffffff;
+    background: var(--primary-gradient);
+    color: #fff;
     font-size: 12px;
     font-weight: 700;
     border-radius: 10px;
@@ -601,7 +806,7 @@ body {
 .dev-name {
     font-size: 13.5px;
     font-weight: 650;
-    color: #1e293b;
+    color: var(--text-primary);
 }
 
 .dev-card a {
@@ -637,7 +842,7 @@ body {
 }
 
 .copyright {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 12px;
 }
 
@@ -650,7 +855,8 @@ body {
     padding: 0;
 }
 
-.text-btn:hover {
+.text-btn:hover,
+.footer a:hover {
     text-decoration: underline;
 }
 
@@ -659,19 +865,18 @@ body {
     text-decoration: none;
 }
 
-.footer a:hover {
-    text-decoration: underline;
-}
+/* =========================================================
+   DISCLAIMER DIALOG
+   ========================================================= */
 
-/* Dialog Modal */
 .disclaimer-dialog {
     width: calc(100% - 32px);
     max-width: 440px;
     margin: auto;
     padding: 0;
     border: none;
-    border-radius: 18px;
-    background: white;
+    border-radius: 22px;
+    background: var(--card-bg);
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
 }
 
@@ -682,14 +887,21 @@ body {
 
 .dialog-content {
     position: relative;
-    padding: 24px 20px;
+    padding: 26px 22px;
     text-align: left;
 }
 
 .dialog-content h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-bottom: 10px;
     color: var(--primary-dark);
     font-size: 18px;
+}
+
+.dialog-content h2 i {
+    color: var(--accent);
 }
 
 .dialog-content p {
@@ -703,42 +915,21 @@ body {
     position: absolute;
     top: 14px;
     right: 14px;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border: none;
-    border-radius: 8px;
-    background: #f1f5f9;
-    color: var(--text-primary);
+    border-radius: 50%;
+    background: var(--card-bg);
+    color: var(--text-muted);
     cursor: pointer;
     display: grid;
     place-items: center;
+    box-shadow: var(--shadow-raised);
 }
 
-/* Mobile Responsive Adjustments */
-@media (max-width: 640px) {
-    .exam-grid-top {
-        grid-template-columns: 1fr;
-    }
-
-    .exam-grid-bottom {
-        grid-template-columns: 1fr;
-    }
-
-    .student-profile-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
-
-    .student-admission-tag {
-        align-self: stretch;
-        text-align: center;
-    }
-}
-
-
-
-/* ===== REDESIGNED FEEDBACK POPUP ===== */
+/* =========================================================
+   FEEDBACK POPUP
+   ========================================================= */
 
 .feedback-modal {
     display: none;
@@ -762,14 +953,12 @@ body {
     width: 100%;
     max-width: 480px;
     padding: 32px 28px;
-    box-sizing: border-box;
-    background: #f1f5f9; /* Soft background tint */
+    background: var(--card-bg);
     border-radius: 28px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
     animation: feedbackAppear 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Close Button (Neumorphic Circle) */
 .feedback-close {
     position: absolute;
     top: 20px;
@@ -780,8 +969,8 @@ body {
     place-items: center;
     border: none;
     border-radius: 50%;
-    background: #f1f5f9;
-    color: #64748b;
+    background: var(--card-bg);
+    color: var(--text-muted);
     font-size: 16px;
     cursor: pointer;
     box-shadow: 4px 4px 10px rgba(203, 213, 225, 0.9),
@@ -790,16 +979,16 @@ body {
 }
 
 .feedback-close:hover {
-    color: #1e293b;
+    color: var(--text-primary);
     transform: scale(1.05);
 }
 
-/* Header Section */
 .feedback-header {
     display: flex;
     align-items: flex-start;
     gap: 16px;
     margin-bottom: 22px;
+    padding-right: 44px;
 }
 
 .header-icon-box {
@@ -809,8 +998,8 @@ body {
     display: grid;
     place-items: center;
     border-radius: 16px;
-    background: #f1f5f9;
-    color: #6366f1;
+    background: var(--card-bg);
+    color: var(--accent);
     font-size: 20px;
     box-shadow: 4px 4px 10px rgba(203, 213, 225, 0.8),
                -4px -4px 10px rgba(255, 255, 255, 0.9);
@@ -818,7 +1007,7 @@ body {
 
 .feedback-header h2 {
     margin: 0 0 4px;
-    color: #1e293b;
+    color: var(--text-primary);
     font-size: 20px;
     font-weight: 800;
     letter-spacing: -0.3px;
@@ -826,12 +1015,11 @@ body {
 
 .feedback-header p {
     margin: 0;
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 13px;
     line-height: 1.4;
 }
 
-/* Form Sections & Labels */
 .form-section {
     margin-bottom: 20px;
 }
@@ -841,6 +1029,10 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
+}
+
+.section-label-bar label {
+    margin-bottom: 0;
 }
 
 .feedback-box label {
@@ -853,7 +1045,7 @@ body {
 }
 
 .required-star {
-    color: #ef4444;
+    color: var(--danger);
 }
 
 .rating-status-text {
@@ -862,7 +1054,6 @@ body {
     color: #6366f1;
 }
 
-/* Interactive Star Rating Container (Recessed/Inset) */
 .star-rating-container {
     width: 100%;
     height: 56px;
@@ -870,72 +1061,37 @@ body {
     align-items: center;
     justify-content: center;
     gap: 12px;
-    background: #f1f5f9;
+    background: var(--card-inner);
     border-radius: 16px;
-    box-shadow: inset 3px 3px 6px rgba(203, 213, 225, 0.8),
-                inset -3px -3px 6px rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-inset);
 }
 
 .star-btn {
     border: none;
     background: transparent;
     font-size: 28px;
-    color: #cbd5e1; /* Default inactive color */
+    color: #cbd5e1;
     cursor: pointer;
-    transition: transform 0.15s ease, color 0.15s ease, text-shadow 0.15s ease;
     padding: 0 4px;
+    transition: transform 0.15s ease, color 0.15s ease, text-shadow 0.15s ease;
 }
 
-/* Shining Active & Hover States */
 .star-btn.active,
 .star-btn.hover {
-    color: #f59e0b; /* Bright Gold */
-    text-shadow: 0 0 12px rgba(245, 158, 11, 0.7); /* Creates the shining/glowing effect */
+    color: #f59e0b;
+    text-shadow: 0 0 12px rgba(245, 158, 11, 0.7);
 }
 
 .star-btn:hover {
     transform: scale(1.15);
 }
 
-/* Category Pill Toggle Group */
-.pill-category-group {
-    display: flex;
-    gap: 8px;
-    width: 100%;
-}
-
-.category-pill {
-    flex: 1;
-    padding: 11px 8px;
-    border: none;
-    border-radius: 12px;
-    background: #f1f5f9;
-    color: #475569;
-    font-size: 12.5px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    box-shadow: 3px 3px 7px rgba(203, 213, 225, 0.7),
-               -3px -3px 7px rgba(255, 255, 255, 0.8);
-    transition: all 0.2s ease;
-}
-
-.category-pill.active {
-    background: #ffffff;
-    color: #6366f1;
-    box-shadow: 0 0 0 2px #6366f1,
-                0 4px 12px rgba(99, 102, 241, 0.15);
-}
-
-/* Inset Input Boxes (For Comment & Name) */
 .inset-input-box {
     width: 100%;
     border-radius: 16px;
-    background: #f1f5f9;
-    box-shadow: inset 3px 3px 6px rgba(203, 213, 225, 0.8),
-                inset -3px -3px 6px rgba(255, 255, 255, 0.9);
+    background: var(--card-inner);
+    box-shadow: var(--shadow-inset);
     padding: 12px 16px;
-    box-sizing: border-box;
 }
 
 .inset-input-box textarea,
@@ -943,27 +1099,30 @@ body {
     width: 100%;
     border: none;
     background: transparent;
-    color: #1e293b;
+    color: var(--text-primary);
     font-family: inherit;
-    font-size: 13.5px;
+    font-size: 14px;
     outline: none;
     resize: none;
 }
 
-.inset-input-box textarea::placeholder,
-.inset-input-box input::placeholder {
-    color: #94a3b8;
+.inset-input-box:focus-within {
+    outline: 2px solid rgba(99, 102, 241, 0.45);
 }
 
-/* Submit Button */
+.inset-input-box textarea::placeholder,
+.inset-input-box input::placeholder {
+    color: var(--text-soft);
+}
+
 .feedback-submit {
     width: 100%;
     height: 50px;
     margin-top: 10px;
     border: none;
     border-radius: 16px;
-    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-    color: #ffffff;
+    background: var(--primary-gradient);
+    color: #fff;
     font-family: inherit;
     font-size: 15px;
     font-weight: 700;
@@ -981,14 +1140,83 @@ body {
     transform: scale(0.98);
 }
 
+.feedback-submit:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+#feedbackError {
+    margin-top: 10px;
+    min-height: 18px;
+    font-size: 13px;
+    text-align: center;
+}
+
+.feedback-success-view {
+    text-align: center;
+    padding: 20px 10px;
+}
+
+.feedback-success-view[hidden] {
+    display: none;
+}
+
+.success-icon-box {
+    font-size: 56px;
+    color: var(--success);
+    margin-bottom: 16px;
+    animation: bounceIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.feedback-success-view h2 {
+    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.feedback-success-view p {
+    color: var(--text-muted);
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
 @keyframes feedbackAppear {
-    from {
-        opacity: 0;
-        transform: translateY(16px) scale(0.96);
+    from { opacity: 0; transform: translateY(16px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes bounceIn {
+    0%   { transform: scale(0); opacity: 0; }
+    70%  { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+/* Tablet: keep three pills but let them stack if too tight */
+@media (max-width: 720px) {
+    .exam-grid-bottom {
+        grid-template-columns: 1fr;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
+}
+
+@media (max-width: 640px) {
+    .student-profile-card {
+        flex-wrap: wrap;
+    }
+
+    .student-admission-tag {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .exam-card {
+        padding: 18px 16px;
+        border-radius: 22px;
     }
 }
 
@@ -998,44 +1226,401 @@ body {
         border-radius: 22px;
     }
 
-    .pill-category-group {
-        flex-direction: column;
-        gap: 6px;
+    .recessed-box {
+        padding: 16px 8px 18px;
     }
 
-    .category-pill {
-        padding: 10px;
+    .box-label {
+        font-size: 11px;
     }
 }
-/* Feedback Success View Layout */
-.feedback-success-view {
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+
+/* =========================================================
+   HOVER EFFECTS (only on devices that can hover)
+   ========================================================= */
+
+.exam-card,
+.student-profile-card,
+.seat-search-card,
+.empty-exam-card,
+.recessed-box,
+.info-pill,
+.pill-icon,
+.student-admission-tag,
+.program-badge,
+.badge-chip,
+.dev-card,
+.section-icon,
+.count-chip,
+.input-field,
+.btn-primary,
+.btn-secondary,
+.feedback-link,
+.feedback-close,
+.close-dialog,
+.star-btn {
+    transition: transform 0.25s ease, box-shadow 0.25s ease,
+                color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+@media (hover: hover) {
+
+    /* Cards lift slightly */
+    .exam-card:hover,
+    .student-profile-card:hover,
+    .seat-search-card:hover,
+    .empty-exam-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 22px 44px rgba(148, 163, 184, 0.26),
+                    0 2px 6px rgba(148, 163, 184, 0.12);
+    }
+
+    /* Room / seat boxes: soft indigo ring */
+    .recessed-box:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-inset), 0 0 0 2px rgba(99, 102, 241, 0.25);
+    }
+
+    .recessed-box:hover .box-value {
+        transform: scale(1.05);
+    }
+
+    /* Info pills: icon grows, ring appears */
+    .info-pill:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-inset), 0 0 0 2px rgba(79, 70, 229, 0.25);
+    }
+
+    .info-pill:hover .pill-icon {
+        transform: scale(1.18);
+    }
+
+    /* Tags and badges */
+    .student-admission-tag:hover,
+    .program-badge:hover,
+    .badge-chip:hover,
+    .dev-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(99, 102, 241, 0.18);
+    }
+
+    .section-icon:hover {
+        transform: rotate(-8deg) scale(1.08);
+    }
+
+    .count-chip:hover {
+        transform: scale(1.1);
+    }
+
+    /* Search box */
+    .input-field:hover {
+        border-color: rgba(99, 102, 241, 0.25);
+    }
+
+    /* Buttons */
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 26px rgba(79, 70, 229, 0.42);
+    }
+
+    .btn-secondary:hover,
+    .feedback-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(99, 102, 241, 0.2);
+        color: var(--primary);
+    }
+
+    .btn-secondary:hover i {
+        transform: translateX(-3px);
+    }
+
+    .btn-secondary i {
+        transition: transform 0.2s ease;
+    }
+
+    .feedback-close:hover,
+    .close-dialog:hover {
+        transform: rotate(90deg) scale(1.05);
+    }
+
+    /* Past exams row */
+    .past-exams-toggle:hover {
+        color: var(--primary-dark);
+    }
+
+    .past-exams-toggle:hover .count-chip {
+        transform: scale(1.1);
+    }
+}
+
+/* Press feedback (touch + mouse) */
+.btn-primary:active,
+.btn-secondary:active,
+.exam-card:active {
+    transform: scale(0.985);
+}
+
+
+/* Room (blue) and Seat (green) values */
+.box-value {
+    transition: transform 0.25s ease;
+}
+
+.box-room .box-value {
+    color: var(--room-color);
+}
+
+.box-seat .box-value {
+    color: var(--seat-color);
+}
+
+
+/* =========================================================
+   EXAM CARD – THEME-MATCHED TICKET
+   (same soft card + inset style as the search & profile cards)
+   ========================================================= */
+
+.exam-card.ticket {
+    position: relative;
+    padding: 0;
+    overflow: hidden;                 /* clips the ticket notches */
+    background: var(--card-bg);
+    border: none;
+    border-radius: 26px;
+    box-shadow: var(--shadow-card);
+}
+
+.exam-card.ticket::before {
+    content: none;
+}
+
+/* Header */
+.ticket .exam-card-header {
+    margin: 0;
+    padding: 20px 24px 0;
+}
+
+.ticket .status-chip {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0;
+}
+
+.ticket .exam-date {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* Room | Seat – one soft inset panel */
+.ticket .exam-grid-top {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    margin: 16px 22px 0;
+    padding: 20px 8px 22px;
+    background: var(--card-inner);
+    border-radius: 20px;
+    box-shadow: var(--shadow-inset);
+}
+
+.seat-cell {
     text-align: center;
-    padding: 20px 10px;
+    padding: 2px 10px;
 }
 
-.success-icon-box {
-    font-size: 56px;
-    color: #10b981;
-    margin-bottom: 16px;
-    animation: bounceIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.seat-cell + .seat-cell {
+    border-left: 1px solid rgba(148, 163, 184, 0.28);
 }
 
-.feedback-success-view h2 {
-    color: #1e293b;
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 8px;
+.cell-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
 }
 
-.feedback-success-view p {
-    color: #64748b;
-    font-size: 13.5px;
-    line-height: 1.5;
-    margin-bottom: 24px;
+.cell-label i {
+    font-size: 13px;
+    color: var(--accent);
 }
 
-@keyframes bounceIn {
-    0% { transform: scale(0); opacity: 0; }
-    70% { transform: scale(1.1); }
-    100% { transform: scale(1); opacity: 1; }
+.cell-value {
+    display: block;
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: clamp(26px, 7.5vw, 44px);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+    transition: transform 0.25s ease;
+}
+
+.cell-room .cell-value { color: var(--room-color); }   /* blue  */
+.cell-seat .cell-value { color: var(--seat-color); }   /* green */
+
+/* Perforated divider with side notches */
+.ticket-divider {
+    position: relative;
+    height: 0;
+    margin: 22px 22px 0;
+    border-top: 2px dashed #cbd5e1;
+}
+
+.ticket-divider::before,
+.ticket-divider::after {
+    content: "";
+    position: absolute;
+    top: -12px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--bg-main);
+    box-shadow: var(--shadow-inset-sm);
+}
+
+.ticket-divider::before { left: -33px; }
+.ticket-divider::after  { right: -33px; }
+
+/* Course code | Shift – inset pills with raised icon tiles */
+.ticket .exam-grid-bottom {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 20px 22px 22px;
+}
+
+.detail {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 12px 14px;
+    background: var(--card-inner);
+    border-radius: 18px;
+    box-shadow: var(--shadow-inset);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.detail-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: var(--card-bg);
+    color: var(--accent);
+    font-size: 16px;
+    box-shadow: var(--shadow-raised);
+    transition: transform 0.25s ease;
+}
+
+.detail-text {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.detail-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-soft);
+}
+
+.detail-value {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    overflow-wrap: anywhere;
+}
+
+.detail-sub {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+/* Hover (mouse devices only) */
+@media (hover: hover) {
+    .detail:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-inset), 0 0 0 2px rgba(79, 70, 229, 0.22);
+    }
+
+    .detail:hover .detail-icon {
+        transform: scale(1.1);
+    }
+
+    .ticket .exam-grid-top:hover .cell-value {
+        transform: scale(1.03);
+    }
+}
+
+/* Small screens */
+@media (max-width: 560px) {
+    .ticket .exam-card-header { padding: 18px 18px 0; }
+
+    .ticket .exam-grid-top {
+        margin: 14px 14px 0;
+        padding: 18px 4px 20px;
+    }
+
+    .ticket .exam-grid-bottom {
+        grid-template-columns: 1fr;
+        padding: 18px 14px 18px;
+    }
+
+    .ticket-divider { margin: 20px 14px 0; }
+    .ticket-divider::before { left: -25px; }
+    .ticket-divider::after  { right: -25px; }
+}
+
+/* =========================================================
+   LIVE "STUDENTS ONLINE" DOT – PULSE ANIMATION
+   ========================================================= */
+
+.online-pulse {
+    position: relative;
+    flex-shrink: 0;
+    animation: onlineBreath 1.8s ease-in-out infinite;
+}
+
+.online-pulse::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--success);
+    animation: onlineRing 1.8s ease-out infinite;
+}
+
+@keyframes onlineRing {
+    0%   { transform: scale(1);   opacity: 0.55; }
+    100% { transform: scale(3.2); opacity: 0; }
+}
+
+@keyframes onlineBreath {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .online-pulse,
+    .online-pulse::after {
+        animation: none !important;
+    }
 }

@@ -2,31 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#f0f4f8">
+    <meta name="description" content="Find your examination room, seat number, shift and timing using your admission number.">
 
     <title>Exam Seat Finder</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=7">
+
+    <!-- Search box + room/seat font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    <script src="script.js" defer></script>
+    <script src="script.js?v=7" defer></script>
 </head>
 <body>
 
 <!-- ================= HEADER ================= -->
 <header class="header">
     <a href="#" class="brand">
-            <span class="logo">
-                <i class="fa-solid fa-graduation-cap"></i>
-            </span>
+        <span class="logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+        </span>
         <span class="brand-name">Exam Seat Finder</span>
     </a>
 
     <div class="header-actions">
-        <a href="#" class="feedback-link" id="openFeedback">
+        <a href="#" class="feedback-link" id="openFeedback" role="button">
             <i class="fa-regular fa-comment-dots"></i>
             <span>Feedback</span>
         </a>
@@ -45,7 +51,7 @@
         <div id="feedbackFormView">
             <div class="feedback-header">
                 <div class="header-icon-box">
-                    <i class="fa-regular fa-comment-medical"></i>
+                    <i class="fa-solid fa-comment-medical"></i>
                 </div>
                 <div>
                     <h2 id="feedbackTitle">Share Your Feedback</h2>
@@ -54,60 +60,45 @@
             </div>
 
             <form id="feedbackForm">
-                <!-- RATING SECTION -->
+                <!-- RATING -->
                 <div class="form-section">
                     <div class="section-label-bar">
-                        <label>
+                        <span class="field-label" id="ratingTitle">
                             RATING <span class="required-star">*</span>
-                        </label>
+                        </span>
                         <span id="ratingLabel" class="rating-status-text">Select rating</span>
                     </div>
 
-                    <div class="star-rating-container" id="starRatingGroup">
-                        <input type="hidden" id="ratingInput" name="rating" required>
+                    <div class="star-rating-container" id="starRatingGroup" role="group" aria-labelledby="ratingTitle">
+                        <input type="hidden" id="ratingInput" name="rating">
 
-                        <button type="button" class="star-btn" data-value="1" aria-label="1 star">
-                            <i class="fa-solid fa-star"></i>
-                        </button>
-                        <button type="button" class="star-btn" data-value="2" aria-label="2 stars">
-                            <i class="fa-solid fa-star"></i>
-                        </button>
-                        <button type="button" class="star-btn" data-value="3" aria-label="3 stars">
-                            <i class="fa-solid fa-star"></i>
-                        </button>
-                        <button type="button" class="star-btn" data-value="4" aria-label="4 stars">
-                            <i class="fa-solid fa-star"></i>
-                        </button>
-                        <button type="button" class="star-btn" data-value="5" aria-label="5 stars">
-                            <i class="fa-solid fa-star"></i>
-                        </button>
+                        <button type="button" class="star-btn" data-value="1" aria-label="1 star"><i class="fa-solid fa-star"></i></button>
+                        <button type="button" class="star-btn" data-value="2" aria-label="2 stars"><i class="fa-solid fa-star"></i></button>
+                        <button type="button" class="star-btn" data-value="3" aria-label="3 stars"><i class="fa-solid fa-star"></i></button>
+                        <button type="button" class="star-btn" data-value="4" aria-label="4 stars"><i class="fa-solid fa-star"></i></button>
+                        <button type="button" class="star-btn" data-value="5" aria-label="5 stars"><i class="fa-solid fa-star"></i></button>
                     </div>
                 </div>
 
-                <!-- COMMENTS SECTION -->
+                <!-- COMMENTS -->
                 <div class="form-section">
                     <label for="comment">
                         COMMENTS <span class="required-star">*</span>
                     </label>
                     <div class="inset-input-box">
-                        <textarea id="comment" name="comment" placeholder="Share your suggestions..." required></textarea>
+                        <textarea id="comment" name="comment" rows="4" maxlength="500" placeholder="Share your suggestions..." required></textarea>
                     </div>
                 </div>
 
-                <!-- OPTIONAL NAME SECTION -->
+                <!-- NAME -->
                 <div class="form-section">
-                    <label for="userName">
-                        NAME (OPTIONAL)
-                    </label>
+                    <label for="userName">NAME (OPTIONAL)</label>
                     <div class="inset-input-box">
-                        <input type="text" id="userName" name="userName" placeholder="e.g. Your name" autocomplete="name">
+                        <input type="text" id="userName" name="userName" maxlength="80" placeholder="e.g. Your name" autocomplete="name">
                     </div>
                 </div>
 
-                <!-- SUBMIT BUTTON -->
-                <button type="submit" class="feedback-submit">
-                    Submit Feedback
-                </button>
+                <button type="submit" class="feedback-submit">Submit Feedback</button>
 
                 <p id="feedbackError" role="status" aria-live="polite"></p>
             </form>
@@ -120,13 +111,9 @@
             </div>
 
             <h2>Thank You For Your Feedback! 😊</h2>
-            <p>
-                Your response has been successfully recorded and helps us improve the portal.
-            </p>
+            <p>Your response has been successfully recorded and helps us improve the portal.</p>
 
-            <button type="button" id="feedbackDoneBtn" class="btn-primary">
-                Done
-            </button>
+            <button type="button" id="feedbackDoneBtn" class="btn-primary">Done</button>
         </div>
 
     </div>
@@ -135,29 +122,26 @@
 <!-- ================= MAIN SECTION ================= -->
 <main class="main-container">
 
-    <!-- INITIAL SEARCH VIEW -->
+    <!-- SEARCH VIEW -->
     <div id="searchView" class="view-section">
         <div class="hero-section">
             <h1 class="main-title">Find Your Seat</h1>
 
             <div class="status-indicators">
-                <div class="badge-chip">
+                <div class="badge-chip" title="Unique visitors">
                     <i class="fa-solid fa-chart-simple"></i>
                     <strong id="visitorCount">--</strong>
                     <span>total visitors</span>
                 </div>
 
-
-                <div class="badge-chip">
+                <div class="badge-chip" title="Live students on this site right now">
                     <span class="online-pulse"></span>
-                    <strong id="onlineCount">0</strong>
-                    <span>students online</span>
+                    <strong id="onlineCount" aria-live="polite">--</strong>
+                    <span id="onlineLabel">students online</span>
                 </div>
-
             </div>
         </div>
 
-        <!-- SEARCH CARD -->
         <section class="seat-search-card">
             <form id="searchForm" class="search-form">
                 <div class="form-group">
@@ -172,6 +156,9 @@
                                 class="input-field"
                                 placeholder="Enter your admission number"
                                 autocomplete="off"
+                                autocapitalize="characters"
+                                spellcheck="false"
+                                maxlength="50"
                                 required
                         >
                     </div>
@@ -189,47 +176,57 @@
 
     <!-- DASHBOARD VIEW -->
     <div id="dashboardView" class="view-section" hidden>
+
         <div class="dashboard-nav">
             <button type="button" id="searchAgainBtn" class="btn-secondary">
                 <i class="fa-solid fa-arrow-left"></i>
                 <span>Search Again</span>
             </button>
 
-            <div class="program-badge" id="programBadge">
-                Student Course
-            </div>
+            <div class="program-badge" id="programBadge">Student Program</div>
         </div>
 
-        <!-- STUDENT PROFILE CARD -->
+        <!-- STUDENT PROFILE -->
         <div class="student-profile-card">
+            <div class="student-avatar" id="studentAvatar" aria-hidden="true">?</div>
+
             <div class="student-info-left">
                 <span class="student-label">STUDENT</span>
                 <h2 id="studentNameDisplay" class="student-name">--</h2>
             </div>
-            <div class="student-admission-tag" id="admissionDisplay">
-                --
+
+            <div class="student-admission-tag">
+                <span id="admissionDisplay">--</span>
             </div>
         </div>
 
-        <!-- UPCOMING EXAMS SECTION -->
+        <!-- UPCOMING EXAMS -->
         <section class="exams-container-section">
-            <div id="upcomingExamContainer"></div>
+            <div class="section-heading">
+                <span class="section-title">
+                    <span class="section-icon"><i class="fa-solid fa-calendar-check"></i></span>
+                    Upcoming Exams
+                </span>
+                <span class="count-chip" id="upcomingCount" hidden>0</span>
+            </div>
+
+            <div id="upcomingExamContainer" class="exam-list"></div>
         </section>
 
-        <!-- PAST EXAMS SECTION -->
+        <!-- PAST EXAMS -->
         <div class="past-exams-wrapper">
-            <button type="button" id="togglePastExams" class="past-exams-toggle" hidden>
+            <button type="button" id="togglePastExams" class="past-exams-toggle" aria-expanded="false" aria-controls="pastExamsContainer" hidden>
                 <span>PAST EXAMS</span>
-                <i id="pastExamsIcon" class="fa-solid fa-chevron-up"></i>
+                <span class="count-chip" id="pastCount">0</span>
+                <i id="pastExamsIcon" class="fa-solid fa-chevron-down" aria-hidden="true"></i>
             </button>
 
-            <div id="pastExamsContainer" class="past-exams-list" hidden></div>
+            <div id="pastExamsContainer" class="exam-list past-exams-list" hidden></div>
         </div>
     </div>
 
-    <!-- DISCLAIMER NOTICE -->
     <p class="disclaimer-text">
-        Notice: Students are advised to verify their examination details against the latest official notification issued by the university.<br>
+        Students are advised to verify their examination details against the latest official notification issued by the university.<br>
         In the event of any discrepancy, the official university notification shall prevail.
     </p>
 
@@ -257,12 +254,11 @@
         <div class="project-info">
             <p class="university-dept">
                 <i class="fa-solid fa-building-columns"></i>
-                Department of AI &amp; ML | Galgotias University
+                Department of CSE (AI &amp; ML) | Galgotias University
             </p>
         </div>
     </div>
 
-    <!-- COPYRIGHT -->
     <p class="copyright">
         © 2026 Exam Seat Finder &bull;
         <button type="button" id="disclaimerButton" class="text-btn">Disclaimer</button> &bull;
@@ -288,9 +284,7 @@
             In case of discrepancies, official university instructions take priority.
         </p>
 
-        <button type="button" id="okDisclaimer" class="btn-primary">
-            Understood
-        </button>
+        <button type="button" id="okDisclaimer" class="btn-primary">Understood</button>
     </div>
 </dialog>
 
