@@ -12,8 +12,6 @@ const API_BASE_URL = isLocalFrontend
 
 console.log("Seat Finder API:", API_BASE_URL);
 
-
-
 /* ---------- ELEMENTS ---------- */
 
 const searchView = document.getElementById("searchView");
@@ -44,14 +42,12 @@ const disclaimerDialog = document.getElementById("disclaimerDialog");
 const closeDisclaimer = document.getElementById("closeDisclaimer");
 const okDisclaimer = document.getElementById("okDisclaimer");
 
-
 const shiftTimings = {
     "1": "09:30 AM – 11:00 AM",
     "2": "11:40 AM – 01:10 PM",
     "3": "01:50 PM – 03:20 PM",
     "4": "04:00 PM – 05:30 PM"
 };
-
 
 /* ---------- SHIFT HELPERS ---------- */
 
@@ -70,7 +66,6 @@ function getExamTime(shift) {
     const number = getShiftNumber(shift);
     return number ? shiftTimings[number] : "Timing unavailable";
 }
-
 
 /* ---------- DATE HELPERS ---------- */
 
@@ -116,18 +111,17 @@ function formatDate(dateValue) {
     });
 }
 
-
 /* ---------- MESSAGE HELPER ---------- */
 
 function showMessage(text, type = "info") {
     if (!message) return;
+
     message.textContent = text;
     message.className = `message ${type}`;
     message.hidden = !text;
 }
 
-
-/* ---------- SAFE ELEMENT HELPERS (no innerHTML with data) ---------- */
+/* ---------- SAFE ELEMENT HELPERS ---------- */
 
 function createTextElement(tag, text, className = "") {
     const element = document.createElement(tag);
@@ -148,24 +142,144 @@ function createIcon(classes) {
     return icon;
 }
 
-
 /* ---------- PROGRAM BADGE ---------- */
 
-function updateProgramBadge(record) {
-    if (!programBadge) return;
+// Identify the examination category using the official section field.
+function getExamType(record) {
+    const section = String(record?.section ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ");
 
-    const details = [record.program, record.semester, record.section]
-        .filter(v => v !== null && v !== undefined && String(v).trim() !== "")
-        .map(v => String(v).trim());
+    if (section.includes("debr")) {
+        return "debarred";
+    }
 
-    programBadge.textContent =
-        details.length > 0 ? details.join(" | ") : "Program details unavailable";
+    if (section.includes("back paper")) {
+        return "back";
+    }
+
+    return "regular";
+}
+
+function isDebarredRecord(record) {
+    return getExamType(record) === "debarred";
+}
+
+function updateProgramBadge(currentRecord, allRecords = []) {
+    const badge = programBadge || document.getElementById("programBadge");
+
+    if (!badge) {
+        console.error("Program badge element not found!");
+        return;
+    }
+
+    badge.replaceChildren();
+
+    const records = Array.isArray(allRecords) ? allRecords : [];
+
+    if (records.length === 0) {
+        return;
+    }
+
+    const today = getTodayString();
+
+    // Find the nearest upcoming examination date.
+    const upcomingDates = records
+        .map(record => dateKey(record))
+        .filter(date => date && date >= today)
+        .sort();
+
+    // If no upcoming exam exists, use the latest available exam date.
+    const selectedDate = upcomingDates.length > 0
+        ? upcomingDates[0]
+        : records
+            .map(record => dateKey(record))
+            .filter(Boolean)
+            .sort()
+            .at(-1);
+
+    if (!selectedDate) {
+        return;
+    }
+
+    // Consider only exams scheduled on the selected date.
+    const selectedRecords = records.filter(
+        record => dateKey(record) === selectedDate
+    );
+
+    // Category priority: Regular > Back Paper > Debarred.
+    const priority = {
+        regular: 1,
+        back: 2,
+        debarred: 3
+    };
+
+    const selectedCategory = selectedRecords
+        .map(record => getExamType(record))
+        .sort((a, b) => priority[a] - priority[b])[0];
+
+    // Keep only the highest-priority category.
+    const filteredRecords = selectedRecords.filter(
+        record => getExamType(record) === selectedCategory
+    );
+
+    // Remove duplicate program + semester + section combinations.
+    const uniqueBadges = new Map();
+
+    filteredRecords.forEach(record => {
+        const type = getExamType(record);
+
+        const program = String(record.program || "Not available").trim();
+        const semester = String(record.semester || "Not available").trim();
+
+        let section = String(record.section || "Not available").trim();
+
+        if (type === "back") {
+            section = "Back Paper";
+        } else if (type === "debarred") {
+            section = "Debr. Exam";
+        }
+
+        const key = `${program.toLowerCase()}|${semester.toLowerCase()}|${section.toLowerCase()}`;
+
+        if (!uniqueBadges.has(key)) {
+            uniqueBadges.set(key, {
+                program,
+                semester,
+                section
+            });
+        }
+    });
+
+    const classNames = {
+        regular: "regular-program-details",
+        back: "back-program-details",
+        debarred: "debarred-program-details"
+    };
+
+    uniqueBadges.forEach(details => {
+        const element = document.createElement("div");
+
+        element.className = classNames[selectedCategory];
+
+        element.textContent =
+            `${details.program} | ${details.semester} | ${details.section}`;
+
+        badge.appendChild(element);
+    });
+
+    console.log("Selected program badge:", {
+        selectedDate,
+        selectedCategory,
+        badges: [...uniqueBadges.values()]
+    });
 }
 
 
 /* =========================================================
    EXAM CARD (ticket layout)
-   ========================================================= */
+========================================================= */
 
 // Big Room / Seat cell
 function createCell(iconClasses, label, value, variant) {
@@ -191,6 +305,7 @@ function createDetail(iconClasses, label, value, sub = "") {
 
     const text = document.createElement("div");
     text.className = "detail-text";
+
     text.append(
         createTextElement("span", label, "detail-label"),
         createTextElement("strong", value, "detail-value")
@@ -206,6 +321,7 @@ function createDetail(iconClasses, label, value, sub = "") {
 
 function createExamCard(record, isPast = false) {
     const card = document.createElement("article");
+
     card.className = isPast
         ? "exam-card ticket is-past"
         : "exam-card ticket is-upcoming";
@@ -216,6 +332,7 @@ function createExamCard(record, isPast = false) {
 
     const status = document.createElement("span");
     status.className = "status-chip";
+
     status.append(
         createIcon(isPast ? "fa-solid fa-circle-check" : "fa-solid fa-circle-dot"),
         isPast ? "Completed exam" : "Upcoming exam"
@@ -225,28 +342,38 @@ function createExamCard(record, isPast = false) {
         status,
         createTextElement("span", formatDate(record.examDate), "exam-date")
     );
+
     card.appendChild(header);
 
     /* Room and Seat */
     const topGrid = document.createElement("div");
     topGrid.className = "exam-grid-top";
+
     topGrid.append(
         createCell("fa-solid fa-building", "Room", record.roomNo || "N/A", "cell-room"),
         createCell("fa-solid fa-chair", "Seat", record.seatNo || "N/A", "cell-seat")
     );
+
     card.appendChild(topGrid);
 
-    /* Divider (decoration) */
+    /* Divider */
     const divider = document.createElement("div");
     divider.className = "ticket-divider";
     divider.setAttribute("aria-hidden", "true");
+
     card.appendChild(divider);
 
     /* Course code and Shift */
     const bottomGrid = document.createElement("div");
     bottomGrid.className = "exam-grid-bottom";
+
     bottomGrid.append(
-        createDetail("fa-solid fa-book-open", "Course code", record.courseCode || "N/A"),
+        createDetail(
+            "fa-solid fa-book-open",
+            "Course code",
+            record.courseCode || "N/A"
+        ),
+
         createDetail(
             "fa-solid fa-clock",
             "Shift",
@@ -254,11 +381,11 @@ function createExamCard(record, isPast = false) {
             getShiftNumber(record.shift) ? getExamTime(record.shift) : ""
         )
     );
+
     card.appendChild(bottomGrid);
 
     return card;
 }
-
 
 /* ---------- NO UPCOMING EXAMS CARD ---------- */
 
@@ -282,7 +409,6 @@ function renderNoUpcomingExamsCard() {
     return wrapper;
 }
 
-
 /* ---------- AVATAR + COUNTS ---------- */
 
 function syncDashboardUi() {
@@ -295,7 +421,10 @@ function syncDashboardUi() {
         studentAvatar.textContent =
             parts.length === 0
                 ? "?"
-                : (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
+                : (
+                    parts[0][0] +
+                    (parts.length > 1 ? parts[parts.length - 1][0] : "")
+                ).toUpperCase();
     }
 
     const upcomingTotal = upcomingExamContainer
@@ -316,14 +445,12 @@ function syncDashboardUi() {
     }
 }
 
-
 /* =========================================================
-   VISITOR COUNTER + LIVE "STUDENTS ONLINE"
-*/
+   VISITOR COUNTER + LIVE STUDENTS ONLINE
+========================================================= */
 
 const HEARTBEAT_MS = 15000;
-let memoryVisitorId = null;     // fallback if localStorage is blocked
-
+let memoryVisitorId = null;
 
 function generateId() {
     if (window.crypto && typeof crypto.randomUUID === "function") {
@@ -340,9 +467,10 @@ function generateId() {
         }
     }
 
-    return Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("");
+    return Array.from(bytes, b =>
+        b.toString(16).padStart(2, "0")
+    ).join("");
 }
-
 
 function getVisitorId() {
     const KEY = "seatFinderVisitorId";
@@ -366,7 +494,6 @@ function getVisitorId() {
 
 const VISITOR_ID = getVisitorId();
 
-
 async function postJson(path, body) {
     const response = await fetch(`${API_BASE_URL}${path}`, {
         method: "POST",
@@ -381,22 +508,24 @@ async function postJson(path, body) {
     return response.json();
 }
 
-
 function showVisitorTotal(count) {
     if (!visitorCount) return;
 
     visitorCount.textContent =
-        count !== undefined && count !== null && Number.isFinite(Number(count))
+        count !== undefined &&
+        count !== null &&
+        Number.isFinite(Number(count))
             ? Number(count).toLocaleString("en-IN")
             : "--";
 }
-
 
 function showOnlineTotal(count) {
     if (!onlineCount) return;
 
     const valid =
-        count !== undefined && count !== null && Number.isFinite(Number(count));
+        count !== undefined &&
+        count !== null &&
+        Number.isFinite(Number(count));
 
     onlineCount.textContent = valid ? String(Number(count)) : "--";
 
@@ -406,12 +535,14 @@ function showOnlineTotal(count) {
     }
 }
 
-
 // Read-only: fetching never increments.
 async function loadVisitorCount() {
     try {
         const response = await fetch(`${API_BASE_URL}/visitors`);
-        if (!response.ok) throw new Error("Visitor API unavailable");
+
+        if (!response.ok) {
+            throw new Error("Visitor API unavailable");
+        }
 
         const data = await response.json();
 
@@ -427,9 +558,6 @@ async function loadVisitorCount() {
     }
 }
 
-
-// Runs once per page load. The server ignores ids it already knows.
-// Counts one page visit whenever the website is opened or refreshed.
 async function registerVisit() {
     try {
         const response = await fetch(`${API_BASE_URL}/visitors/visit`, {
@@ -449,20 +577,21 @@ async function registerVisit() {
     }
 }
 
-
-// Keeps this browser in the "online" list (skipped while the tab is hidden).
 async function sendHeartbeat() {
     if (document.hidden) return;
 
     try {
-        const data = await postJson("/visitors/online", { sessionId: VISITOR_ID });
+        const data = await postJson("/visitors/online", {
+            sessionId: VISITOR_ID
+        });
+
         showOnlineTotal(data.studentsOnline);
+
     } catch (error) {
         showOnlineTotal(null);
         console.warn("Online heartbeat failed:", error.message);
     }
 }
-
 
 function leaveSite() {
     try {
@@ -474,10 +603,9 @@ function leaveSite() {
             )
         );
     } catch (error) {
-        /* nothing to do – the server times the session out anyway */
+        // Server timeout handles the session.
     }
 }
-
 
 function startTracking() {
     registerVisit();
@@ -485,20 +613,16 @@ function startTracking() {
 
     setInterval(sendHeartbeat, HEARTBEAT_MS);
 
-    // Tab becomes visible again -> refresh immediately
     document.addEventListener("visibilitychange", () => {
         if (!document.hidden) sendHeartbeat();
     });
 
-    // Coming back from the browser's back/forward cache
     window.addEventListener("pageshow", event => {
         if (event.persisted) sendHeartbeat();
     });
 
-    // Tab / browser closed
     window.addEventListener("pagehide", leaveSite);
 }
-
 
 /* ---------- PAST EXAMS ACCORDION ---------- */
 
@@ -507,9 +631,10 @@ let isPastExamsOpen = false;
 function setPastExamsOpen(open) {
     isPastExamsOpen = open;
 
-    if (pastExamsContainer) pastExamsContainer.hidden = !open;
+    if (pastExamsContainer) {
+        pastExamsContainer.hidden = !open;
+    }
 
-    // CSS rotates the chevron from aria-expanded (no class swapping needed)
     if (togglePastExams) {
         togglePastExams.setAttribute("aria-expanded", String(open));
     }
@@ -520,7 +645,6 @@ if (togglePastExams) {
         setPastExamsOpen(!isPastExamsOpen);
     });
 }
-
 
 /* ---------- SEARCH FORM ---------- */
 
@@ -536,7 +660,7 @@ if (searchForm) {
     searchForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
-        if (searchButton.disabled) return;     // ignore double clicks
+        if (searchButton.disabled) return;
 
         const admissionNo = admissionInput.value.trim();
 
@@ -563,9 +687,11 @@ if (searchForm) {
                 if (response.status === 404) {
                     throw new Error("Admission number not found.");
                 }
+
                 if (response.status === 400) {
                     throw new Error("Please enter a valid admission number.");
                 }
+
                 throw new Error("Unable to search right now. Please try again.");
             }
 
@@ -579,30 +705,45 @@ if (searchForm) {
                 return;
             }
 
-            /* Student information */
-            const firstRecord = records[0];
+            console.log("========== SEAT FINDER DEBUG ==========");
+            console.log("Total records:", records.length);
+
+            records.forEach((record, index) => {
+                console.log("Record:", index + 1, record);
+                console.log("Program:", record.program);
+                console.log("Semester:", record.semester);
+                console.log("Section:", record.section);
+                console.log("Category:", getExamType(record));
+            });
+
+            console.log("======================================");
+
+            // Select a non-debarred record for common student details.
+            const currentRecord =
+                records.find(record => !isDebarredRecord(record)) || records[0];
 
             if (studentNameDisplay) {
                 studentNameDisplay.textContent =
-                    firstRecord.studentName || "Student Details";
+                    currentRecord.studentName || "Student Details";
             }
 
             if (admissionDisplay) {
                 admissionDisplay.textContent =
-                    firstRecord.admissionNo || admissionNo;
+                    currentRecord.admissionNo || admissionNo;
             }
 
-            updateProgramBadge(firstRecord);
 
-            /* Upcoming vs completed.
-               FIX: records with no exam date used to disappear completely;
-               they now show under Upcoming (at the end). */
+           // Display the branch for the nearest upcoming examination date.
+           updateProgramBadge(currentRecord, records);
+            /* Upcoming vs completed */
             const todayStr = getTodayString();
 
             const upcomingExams = records
                 .filter(r => !dateKey(r) || dateKey(r) >= todayStr)
                 .sort((a, b) =>
-                    (dateKey(a) || "9999-99-99").localeCompare(dateKey(b) || "9999-99-99") ||
+                    (dateKey(a) || "9999-99-99").localeCompare(
+                        dateKey(b) || "9999-99-99"
+                    ) ||
                     shiftKey(a).localeCompare(shiftKey(b))
                 );
 
@@ -613,16 +754,25 @@ if (searchForm) {
                     shiftKey(a).localeCompare(shiftKey(b))
                 );
 
-            if (upcomingExamContainer) upcomingExamContainer.replaceChildren();
-            if (pastExamsContainer) pastExamsContainer.replaceChildren();
+            if (upcomingExamContainer) {
+                upcomingExamContainer.replaceChildren();
+            }
+
+            if (pastExamsContainer) {
+                pastExamsContainer.replaceChildren();
+            }
 
             if (upcomingExamContainer) {
                 if (upcomingExams.length > 0) {
-                    upcomingExams.forEach(r =>
-                        upcomingExamContainer.appendChild(createExamCard(r, false))
-                    );
+                    upcomingExams.forEach(r => {
+                        upcomingExamContainer.appendChild(
+                            createExamCard(r, false)
+                        );
+                    });
                 } else {
-                    upcomingExamContainer.appendChild(renderNoUpcomingExamsCard());
+                    upcomingExamContainer.appendChild(
+                        renderNoUpcomingExamsCard()
+                    );
                 }
             }
 
@@ -631,9 +781,11 @@ if (searchForm) {
             }
 
             if (pastExamsContainer) {
-                pastExams.forEach(r =>
-                    pastExamsContainer.appendChild(createExamCard(r, true))
-                );
+                pastExams.forEach(r => {
+                    pastExamsContainer.appendChild(
+                        createExamCard(r, true)
+                    );
+                });
             }
 
             /* Show dashboard */
@@ -644,8 +796,6 @@ if (searchForm) {
             showMessage("");
 
             window.scrollTo({ top: 0, behavior: "smooth" });
-
-            // NOTE: no visitor counting here any more.
 
         } catch (error) {
             console.error("Search error:", error);
@@ -670,7 +820,6 @@ if (searchForm) {
     });
 }
 
-
 /* ---------- SEARCH AGAIN ---------- */
 
 if (searchAgainBtn) {
@@ -680,12 +829,23 @@ if (searchAgainBtn) {
 
         if (admissionInput) admissionInput.value = "";
 
-        if (upcomingExamContainer) upcomingExamContainer.replaceChildren();
-        if (pastExamsContainer) pastExamsContainer.replaceChildren();
+        if (upcomingExamContainer) {
+            upcomingExamContainer.replaceChildren();
+        }
 
-        if (togglePastExams) togglePastExams.hidden = true;
+        if (pastExamsContainer) {
+            pastExamsContainer.replaceChildren();
+        }
 
-        if (programBadge) programBadge.textContent = "Student Program";
+        if (togglePastExams) {
+            togglePastExams.hidden = true;
+        }
+
+        if (programBadge) {
+            programBadge.replaceChildren();
+            programBadge.textContent = "Student Program";
+        }
+
         if (studentNameDisplay) studentNameDisplay.textContent = "";
         if (admissionDisplay) admissionDisplay.textContent = "";
 
@@ -699,35 +859,40 @@ if (searchAgainBtn) {
     });
 }
 
-
 /* ---------- DISCLAIMER MODAL ---------- */
 
 if (disclaimerButton && disclaimerDialog) {
-    disclaimerButton.addEventListener("click", () => disclaimerDialog.showModal());
+    disclaimerButton.addEventListener("click", () => {
+        disclaimerDialog.showModal();
+    });
 }
 
 if (closeDisclaimer && disclaimerDialog) {
-    closeDisclaimer.addEventListener("click", () => disclaimerDialog.close());
+    closeDisclaimer.addEventListener("click", () => {
+        disclaimerDialog.close();
+    });
 }
 
 if (okDisclaimer && disclaimerDialog) {
-    okDisclaimer.addEventListener("click", () => disclaimerDialog.close());
+    okDisclaimer.addEventListener("click", () => {
+        disclaimerDialog.close();
+    });
 }
 
 // Click on the dark backdrop closes it.
 if (disclaimerDialog) {
     disclaimerDialog.addEventListener("click", event => {
-        if (event.target === disclaimerDialog) disclaimerDialog.close();
+        if (event.target === disclaimerDialog) {
+            disclaimerDialog.close();
+        }
     });
 }
 
-
 /* =========================================================
    FEEDBACK MODAL
-   ========================================================= */
+========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
-
     const feedbackModal = document.getElementById("feedbackModal");
     const openFeedback = document.getElementById("openFeedback");
     const closeFeedback = document.getElementById("closeFeedback");
@@ -767,7 +932,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function openFeedbackPopup(event) {
         if (event) event.preventDefault();
 
-        // FIX: cancel a pending reset so it cannot wipe a form that was just reopened
         window.clearTimeout(resetTimer);
 
         if (feedbackFormView) feedbackFormView.hidden = false;
@@ -787,7 +951,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (ratingInput) ratingInput.value = "";
         if (ratingLabel) ratingLabel.textContent = "Select rating";
 
-        stars.forEach(star => star.classList.remove("active", "hover"));
+        stars.forEach(star => {
+            star.classList.remove("active", "hover");
+        });
 
         clearFeedbackError();
     }
@@ -797,22 +963,34 @@ document.addEventListener("DOMContentLoaded", function () {
         feedbackModal.setAttribute("aria-hidden", "true");
 
         window.clearTimeout(resetTimer);
+
         resetTimer = window.setTimeout(() => {
             if (feedbackFormView) feedbackFormView.hidden = false;
             if (feedbackSuccessView) feedbackSuccessView.hidden = true;
+
             resetFeedbackForm();
         }, 200);
     }
 
-    if (closeFeedback) closeFeedback.addEventListener("click", closeFeedbackPopup);
-    if (feedbackDoneBtn) feedbackDoneBtn.addEventListener("click", closeFeedbackPopup);
+    if (closeFeedback) {
+        closeFeedback.addEventListener("click", closeFeedbackPopup);
+    }
+
+    if (feedbackDoneBtn) {
+        feedbackDoneBtn.addEventListener("click", closeFeedbackPopup);
+    }
 
     feedbackModal.addEventListener("click", event => {
-        if (event.target === feedbackModal) closeFeedbackPopup();
+        if (event.target === feedbackModal) {
+            closeFeedbackPopup();
+        }
     });
 
     document.addEventListener("keydown", event => {
-        if (event.key === "Escape" && feedbackModal.classList.contains("show")) {
+        if (
+            event.key === "Escape" &&
+            feedbackModal.classList.contains("show")
+        ) {
             closeFeedbackPopup();
         }
     });
@@ -831,7 +1009,9 @@ document.addEventListener("DOMContentLoaded", function () {
         star.addEventListener("click", () => {
             const value = Number(star.getAttribute("data-value"));
 
-            if (!Number.isInteger(value) || value < 1 || value > 5) return;
+            if (!Number.isInteger(value) || value < 1 || value > 5) {
+                return;
+            }
 
             if (ratingInput) ratingInput.value = String(value);
             if (ratingLabel) ratingLabel.textContent = ratingTexts[value];
@@ -865,7 +1045,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const submitButton = feedbackForm.querySelector(".feedback-submit");
 
-        if (submitButton && submitButton.disabled) return;   // no double submit
+        if (submitButton && submitButton.disabled) return;
 
         const rating = Number(ratingInput?.value || 0);
         const comment = String(commentInput?.value ?? "").trim();
@@ -918,7 +1098,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         } catch (error) {
             console.error("Feedback submission failed:", error);
-            showFeedbackError("Unable to submit feedback. Please try again.");
+
+            showFeedbackError(
+                "Unable to submit feedback. Please try again."
+            );
 
         } finally {
             if (submitButton) {
@@ -929,7 +1112,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-
 /* ---------- INITIAL PAGE LOAD ---------- */
+
 loadVisitorCount();
 startTracking();
+

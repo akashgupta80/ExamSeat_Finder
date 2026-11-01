@@ -9,5 +9,7 @@ import java.util.List;
 public interface ExamSeatRepository
         extends JpaRepository<ExamSeat, Long> {
 
-    List<ExamSeat> findByAdmissionNo(String admissionNo);
+    List<ExamSeat> findByAdmissionNoOrderByExamDateAscShiftAsc(
+            String admissionNo
+    );
 }

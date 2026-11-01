@@ -60,8 +60,9 @@ public class ExamSeatController {
                     "Admission number is too long."
             );
         }
+        List<ExamSeat> seats =
+                examSeatRepository.findByAdmissionNoOrderByExamDateAscShiftAsc(cleaned);
 
-        List<ExamSeat> seats = examSeatRepository.findByAdmissionNo(cleaned);
 
         if (seats.isEmpty()) {
             throw new ResponseStatusException(

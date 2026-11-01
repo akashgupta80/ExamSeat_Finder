@@ -181,15 +181,6 @@ body {
     color: var(--text-primary);
 }
 
-.online-pulse {
-    width: 8px;
-    height: 8px;
-    background-color: var(--success);
-    border-radius: 50%;
-    display: inline-block;
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-}
-
 /* =========================================================
    SEARCH CARD
    ========================================================= */
@@ -319,19 +310,6 @@ body {
     margin-bottom: 18px;
     gap: 10px;
     flex-wrap: wrap;
-}
-
-.program-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--card-bg);
-    padding: 10px 16px;
-    border-radius: 14px;
-    font-size: 13px;
-    font-weight: 650;
-    color: var(--primary);
-    box-shadow: var(--shadow-raised);
 }
 
 .student-profile-card {
@@ -469,7 +447,6 @@ body {
     box-shadow: var(--shadow-card);
 }
 
-/* Card header: status on the left, date on the right */
 .exam-card-header {
     display: flex;
     align-items: center;
@@ -526,7 +503,6 @@ body {
     color: var(--text-soft);
 }
 
-/* ROOM & SEAT – two big inset boxes */
 .exam-grid-top {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -563,7 +539,6 @@ body {
     overflow-wrap: anywhere;
 }
 
-/* COURSE / DATE / SHIFT – icon pills */
 .exam-grid-bottom {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 1.3fr);
@@ -608,7 +583,6 @@ body {
     overflow-wrap: anywhere;
 }
 
-/* Completed cards: same layout, slightly quieter */
 .exam-card.is-past .pill-value {
     color: #475569;
 }
@@ -1035,13 +1009,19 @@ body {
     margin-bottom: 0;
 }
 
-.feedback-box label {
+.feedback-box label,
+.field-label {
     display: block;
     margin-bottom: 8px;
     color: #475569;
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.05em;
+}
+
+/* Inside the rating bar the spacing comes from the bar itself */
+.section-label-bar .field-label {
+    margin-bottom: 0;
 }
 
 .required-star {
@@ -1197,7 +1177,6 @@ body {
    RESPONSIVE
    ========================================================= */
 
-/* Tablet: keep three pills but let them stack if too tight */
 @media (max-width: 720px) {
     .exam-grid-bottom {
         grid-template-columns: 1fr;
@@ -1243,7 +1222,6 @@ body {
     }
 }
 
-
 /* =========================================================
    HOVER EFFECTS (only on devices that can hover)
    ========================================================= */
@@ -1273,8 +1251,6 @@ body {
 }
 
 @media (hover: hover) {
-
-    /* Cards lift slightly */
     .exam-card:hover,
     .student-profile-card:hover,
     .seat-search-card:hover,
@@ -1284,7 +1260,6 @@ body {
                     0 2px 6px rgba(148, 163, 184, 0.12);
     }
 
-    /* Room / seat boxes: soft indigo ring */
     .recessed-box:hover {
         transform: translateY(-2px);
         box-shadow: var(--shadow-inset), 0 0 0 2px rgba(99, 102, 241, 0.25);
@@ -1294,7 +1269,6 @@ body {
         transform: scale(1.05);
     }
 
-    /* Info pills: icon grows, ring appears */
     .info-pill:hover {
         transform: translateY(-2px);
         box-shadow: var(--shadow-inset), 0 0 0 2px rgba(79, 70, 229, 0.25);
@@ -1304,7 +1278,6 @@ body {
         transform: scale(1.18);
     }
 
-    /* Tags and badges */
     .student-admission-tag:hover,
     .program-badge:hover,
     .badge-chip:hover,
@@ -1321,12 +1294,10 @@ body {
         transform: scale(1.1);
     }
 
-    /* Search box */
     .input-field:hover {
         border-color: rgba(99, 102, 241, 0.25);
     }
 
-    /* Buttons */
     .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 12px 26px rgba(79, 70, 229, 0.42);
@@ -1352,7 +1323,6 @@ body {
         transform: rotate(90deg) scale(1.05);
     }
 
-    /* Past exams row */
     .past-exams-toggle:hover {
         color: var(--primary-dark);
     }
@@ -1360,17 +1330,27 @@ body {
     .past-exams-toggle:hover .count-chip {
         transform: scale(1.1);
     }
+
+    .detail:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-inset), 0 0 0 2px rgba(79, 70, 229, 0.22);
+    }
+
+    .detail:hover .detail-icon {
+        transform: scale(1.1);
+    }
+
+    .ticket .exam-grid-top:hover .cell-value {
+        transform: scale(1.03);
+    }
 }
 
-/* Press feedback (touch + mouse) */
 .btn-primary:active,
 .btn-secondary:active,
 .exam-card:active {
     transform: scale(0.985);
 }
 
-
-/* Room (blue) and Seat (green) values */
 .box-value {
     transition: transform 0.25s ease;
 }
@@ -1383,16 +1363,55 @@ body {
     color: var(--seat-color);
 }
 
+/* =========================================================
+   LIVE "STUDENTS ONLINE" DOT – PULSE ANIMATION
+   ========================================================= */
+
+.online-pulse {
+    position: relative;
+    flex-shrink: 0;
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--success);
+    animation: onlineBreath 1.8s ease-in-out infinite;
+}
+
+.online-pulse::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--success);
+    animation: onlineRing 1.8s ease-out infinite;
+}
+
+@keyframes onlineRing {
+    0%   { transform: scale(1);   opacity: 0.55; }
+    100% { transform: scale(3.2); opacity: 0; }
+}
+
+@keyframes onlineBreath {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .online-pulse,
+    .online-pulse::after {
+        animation: none !important;
+    }
+}
 
 /* =========================================================
    EXAM CARD – THEME-MATCHED TICKET
-   (same soft card + inset style as the search & profile cards)
    ========================================================= */
 
 .exam-card.ticket {
     position: relative;
     padding: 0;
-    overflow: hidden;                 /* clips the ticket notches */
+    overflow: hidden;
     background: var(--card-bg);
     border: none;
     border-radius: 26px;
@@ -1403,7 +1422,6 @@ body {
     content: none;
 }
 
-/* Header */
 .ticket .exam-card-header {
     margin: 0;
     padding: 20px 24px 0;
@@ -1421,7 +1439,6 @@ body {
     color: var(--text-muted);
 }
 
-/* Room | Seat – one soft inset panel */
 .ticket .exam-grid-top {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1468,10 +1485,9 @@ body {
     transition: transform 0.25s ease;
 }
 
-.cell-room .cell-value { color: var(--room-color); }   /* blue  */
-.cell-seat .cell-value { color: var(--seat-color); }   /* green */
+.cell-room .cell-value { color: var(--room-color); }
+.cell-seat .cell-value { color: var(--seat-color); }
 
-/* Perforated divider with side notches */
 .ticket-divider {
     position: relative;
     height: 0;
@@ -1494,7 +1510,6 @@ body {
 .ticket-divider::before { left: -33px; }
 .ticket-divider::after  { right: -33px; }
 
-/* Course code | Shift – inset pills with raised icon tiles */
 .ticket .exam-grid-bottom {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1554,23 +1569,51 @@ body {
     color: var(--text-muted);
 }
 
-/* Hover (mouse devices only) */
-@media (hover: hover) {
-    .detail:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-inset), 0 0 0 2px rgba(79, 70, 229, 0.22);
-    }
+/* =========================================================
+   PROGRAM & BRANCH BADGE STYLING (MATCHED TO INSET UI)
+   ========================================================= */
 
-    .detail:hover .detail-icon {
-        transform: scale(1.1);
-    }
-
-    .ticket .exam-grid-top:hover .cell-value {
-        transform: scale(1.03);
-    }
+.program-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
 }
 
-/* Small screens */
+.regular-program-details,
+.back-program-details,
+.debarred-program-details {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    padding: 9px 16px;
+    border-radius: 14px; /* Matches student-admission-tag corner radius */
+    font-size: 13px;
+    font-weight: 700;    /* Bold font weight matching admission tag */
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    background: var(--card-inner);
+    box-shadow: var(--shadow-inset-sm); /* Exact inner recessed shadow */
+}
+
+.regular-program-details,
+.current-program-details {
+    display: inline-flex;
+    color: var(--primary);
+}
+
+.back-program-details,
+.debarred-program-details {
+    display: inline-flex;
+    color: var(--danger);
+}
+
+/* =========================================================
+   SMALL SCREENS – TICKET OVERRIDES
+   (kept at the very end so they beat the base .ticket rules)
+   ========================================================= */
+
 @media (max-width: 560px) {
     .ticket .exam-card-header { padding: 18px 18px 0; }
 
@@ -1588,39 +1631,16 @@ body {
     .ticket-divider::before { left: -25px; }
     .ticket-divider::after  { right: -25px; }
 }
-
-/* =========================================================
-   LIVE "STUDENTS ONLINE" DOT – PULSE ANIMATION
-   ========================================================= */
-
-.online-pulse {
-    position: relative;
-    flex-shrink: 0;
-    animation: onlineBreath 1.8s ease-in-out infinite;
+/* Debarred exam — red */
+.debarred-program-details {
+    color: #dc2626;
+    background: #fee2e2;
+    border-color: #fecaca;
 }
 
-.online-pulse::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: var(--success);
-    animation: onlineRing 1.8s ease-out infinite;
-}
-
-@keyframes onlineRing {
-    0%   { transform: scale(1);   opacity: 0.55; }
-    100% { transform: scale(3.2); opacity: 0; }
-}
-
-@keyframes onlineBreath {
-    0%, 100% { transform: scale(1); }
-    50%      { transform: scale(1.15); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .online-pulse,
-    .online-pulse::after {
-        animation: none !important;
-    }
+/* Back paper — normal styling */
+.back-program-details {
+    color: #4f46e5;
+    background: #eef2ff;
+    border-color: #c7d2fe;
 }
