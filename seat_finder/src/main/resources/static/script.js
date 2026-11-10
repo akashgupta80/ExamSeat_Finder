@@ -1,7 +1,3 @@
-/* =========================================================
-   EXAM SEAT FINDER – MAIN SCRIPT
-   ========================================================= */
-
 const isLocalFrontend =
     location.protocol === "file:" ||
     (
@@ -11,7 +7,7 @@ const isLocalFrontend =
 
 const API_BASE_URL = isLocalFrontend
     ? "http://localhost:8080/api"
-    : "/api";
+    : "https://examseat-finder.onrender.com/api";
 
 console.log("Seat Finder API:", API_BASE_URL);
 
