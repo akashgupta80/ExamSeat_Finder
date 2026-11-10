@@ -9,20 +9,16 @@
     <title>Exam Seat Finder</title>
 
     <link rel="stylesheet" href="style.css?v=8">
-
-    <!-- Search box + room/seat font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
     <script src="script.js?v=8" defer></script>
 </head>
 <body>
 
-<!-- ================= HEADER ================= -->
 <header class="header">
     <a href="#" class="brand">
         <span class="logo">
@@ -39,39 +35,35 @@
     </div>
 </header>
 
-<!-- ================= FEEDBACK MODAL ================= -->
-<div class="feedback-modal" id="feedbackModal" aria-hidden="true">
-    <div class="feedback-box" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle">
+<div class="feedback-modal" id="fbModal" aria-hidden="true">
+    <div class="feedback-box" role="dialog" aria-modal="true" aria-labelledby="fbTitle">
 
-        <button type="button" class="feedback-close" id="closeFeedback" aria-label="Close feedback">
+        <button type="button" class="feedback-close" id="fbClose" aria-label="Close feedback">
             <i class="fa-solid fa-xmark"></i>
         </button>
 
-        <!-- FEEDBACK FORM VIEW -->
-        <div id="feedbackFormView">
+        <div id="fbFormView">
             <div class="feedback-header">
                 <div class="header-icon-box">
                     <i class="fa-solid fa-comment-medical"></i>
                 </div>
                 <div>
-                    <h2 id="feedbackTitle">Share Your Feedback</h2>
+                    <h2 id="fbTitle">Share Your Feedback</h2>
                     <p>Your suggestions help us improve the exam portal.</p>
                 </div>
             </div>
 
-            <form id="feedbackForm">
-                <!-- RATING -->
+            <form id="fbForm" novalidate>
                 <div class="form-section">
                     <div class="section-label-bar">
-                        <span class="field-label" id="ratingTitle">
+                        <span class="field-label" id="fbRatingTitle">
                             RATING <span class="required-star">*</span>
                         </span>
-                        <span id="ratingLabel" class="rating-status-text">Select rating</span>
+                        <span id="fbRatingLabel" class="rating-status-text">Select rating</span>
                     </div>
 
-                    <div class="star-rating-container" id="starRatingGroup" role="group" aria-labelledby="ratingTitle">
-                        <input type="hidden" id="ratingInput" name="rating">
-
+                    <div class="star-rating-container" id="fbStars" role="group" aria-labelledby="fbRatingTitle">
+                        <input type="hidden" id="fbRating">
                         <button type="button" class="star-btn" data-value="1" aria-label="1 star"><i class="fa-solid fa-star"></i></button>
                         <button type="button" class="star-btn" data-value="2" aria-label="2 stars"><i class="fa-solid fa-star"></i></button>
                         <button type="button" class="star-btn" data-value="3" aria-label="3 stars"><i class="fa-solid fa-star"></i></button>
@@ -80,32 +72,44 @@
                     </div>
                 </div>
 
-                <!-- COMMENTS -->
                 <div class="form-section">
-                    <label for="comment">
+                    <div class="section-label-bar">
+                        <span class="field-label" id="fbAccTitle">DID YOU FIND YOUR DETAILS ACCURATE? <span class="required-star">*</span></span>
+                    </div>
+                    <div class="acc-group" role="group" aria-labelledby="fbAccTitle">
+                        <input type="hidden" id="fbAccurate">
+                        <button type="button" class="acc-btn yes" data-value="yes" aria-pressed="false"><i class="fa-solid fa-circle-check"></i> Yes</button>
+                        <button type="button" class="acc-btn no" data-value="no" aria-pressed="false"><i class="fa-solid fa-circle-xmark"></i> No</button>
+                    </div>
+                    <p class="acc-hint" id="fbAccHint">Sorry about that! Please tell us what was wrong in the comments.</p>
+                </div>
+
+                <div class="form-section">
+                    <label for="fbComment">
                         COMMENTS <span class="required-star">*</span>
                     </label>
                     <div class="inset-input-box">
-                        <textarea id="comment" name="comment" rows="4" maxlength="500" placeholder="Share your suggestions..." required></textarea>
+                        <textarea id="fbComment" rows="4" maxlength="500" placeholder="Share your suggestions..."></textarea>
                     </div>
                 </div>
 
-                <!-- NAME -->
                 <div class="form-section">
-                    <label for="userName">NAME (OPTIONAL)</label>
+                    <label for="fbName">NAME (OPTIONAL)</label>
                     <div class="inset-input-box">
-                        <input type="text" id="userName" name="userName" maxlength="80" placeholder="e.g. Your name" autocomplete="name">
+                        <input type="text" id="fbName" maxlength="80" placeholder="e.g. Your name" autocomplete="name">
                     </div>
                 </div>
 
-                <button type="submit" class="feedback-submit">Submit Feedback</button>
+                <button type="submit" class="feedback-submit">
+                    <span>Submit Feedback</span>
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
 
-                <p id="feedbackError" role="status" aria-live="polite"></p>
+                <p id="fbError" class="feedback-error" role="status" aria-live="polite"></p>
             </form>
         </div>
 
-        <!-- SUCCESS VIEW -->
-        <div id="feedbackSuccessView" class="feedback-success-view" hidden>
+        <div id="fbSuccessView" class="feedback-success-view" hidden>
             <div class="success-icon-box">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
@@ -113,16 +117,14 @@
             <h2>Thank You For Your Feedback! 😊</h2>
             <p>Your response has been successfully recorded and helps us improve the portal.</p>
 
-            <button type="button" id="feedbackDoneBtn" class="btn-primary">Done</button>
+            <button type="button" id="fbDone" class="btn-primary">Done</button>
         </div>
 
     </div>
 </div>
 
-<!-- ================= MAIN SECTION ================= -->
 <main class="main-container">
 
-    <!-- SEARCH VIEW -->
     <div id="searchView" class="view-section">
         <div class="hero-section">
             <h1 class="main-title">Find Your Seat</h1>
@@ -174,7 +176,6 @@
         </section>
     </div>
 
-    <!-- DASHBOARD VIEW -->
     <div id="dashboardView" class="view-section" hidden>
 
         <div class="dashboard-nav">
@@ -186,7 +187,6 @@
             <div class="program-badge" id="programBadge">Student Program</div>
         </div>
 
-        <!-- STUDENT PROFILE -->
         <div class="student-profile-card">
             <div class="student-avatar" id="studentAvatar" aria-hidden="true">?</div>
 
@@ -200,7 +200,6 @@
             </div>
         </div>
 
-        <!-- UPCOMING EXAMS -->
         <section class="exams-container-section">
             <div class="section-heading">
                 <span class="section-title">
@@ -213,7 +212,6 @@
             <div id="upcomingExamContainer" class="exam-list"></div>
         </section>
 
-        <!-- PAST EXAMS -->
         <div class="past-exams-wrapper">
             <button type="button" id="togglePastExams" class="past-exams-toggle" aria-expanded="false" aria-controls="pastExamsContainer" hidden>
                 <span>PAST EXAMS</span>
@@ -232,7 +230,6 @@
 
 </main>
 
-<!-- ================= FOOTER ================= -->
 <footer class="footer">
     <div class="developer-card-container">
         <div class="footer-divider">
@@ -266,7 +263,6 @@
     </p>
 </footer>
 
-<!-- ================= DISCLAIMER MODAL ================= -->
 <dialog id="disclaimerDialog" class="disclaimer-dialog">
     <div class="dialog-content">
         <button type="button" id="closeDisclaimer" class="close-dialog" aria-label="Close disclaimer">
@@ -290,4 +286,3 @@
 
 </body>
 </html>
-

@@ -1,3 +1,6 @@
+/* =========================================================
+   EXAM SEAT FINDER – MAIN SCRIPT
+   ========================================================= */
 
 const isLocalFrontend =
     location.protocol === "file:" ||
@@ -11,8 +14,6 @@ const API_BASE_URL = isLocalFrontend
     : "/api";
 
 console.log("Seat Finder API:", API_BASE_URL);
-
-/* ---------- ELEMENTS ---------- */
 
 const searchView = document.getElementById("searchView");
 const dashboardView = document.getElementById("dashboardView");
@@ -49,9 +50,6 @@ const shiftTimings = {
     "4": "04:00 PM – 05:30 PM"
 };
 
-/* ---------- SHIFT HELPERS ---------- */
-
-// Supports 3, "3", "Shift 3", and "shift-3".
 function getShiftNumber(shift) {
     const match = String(shift ?? "").trim().match(/\d+/);
     return match && shiftTimings[match[0]] ? match[0] : null;
@@ -67,9 +65,6 @@ function getExamTime(shift) {
     return number ? shiftTimings[number] : "Timing unavailable";
 }
 
-/* ---------- DATE HELPERS ---------- */
-
-// Today's date in the device's local timezone (YYYY-MM-DD).
 function getTodayString() {
     const today = new Date();
     const year = today.getFullYear();
@@ -82,7 +77,6 @@ function normalizeDate(dateValue) {
     return dateValue ? String(dateValue).substring(0, 10) : "";
 }
 
-// 2026-10-25 -> 25 Oct 2026
 function formatDate(dateValue) {
     const dateString = normalizeDate(dateValue);
     const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -111,8 +105,6 @@ function formatDate(dateValue) {
     });
 }
 
-/* ---------- MESSAGE HELPER ---------- */
-
 function showMessage(text, type = "info") {
     if (!message) return;
 
@@ -120,8 +112,6 @@ function showMessage(text, type = "info") {
     message.className = `message ${type}`;
     message.hidden = !text;
 }
-
-/* ---------- SAFE ELEMENT HELPERS ---------- */
 
 function createTextElement(tag, text, className = "") {
     const element = document.createElement(tag);
@@ -142,9 +132,6 @@ function createIcon(classes) {
     return icon;
 }
 
-/* ---------- PROGRAM BADGE ---------- */
-
-// Identify the examination category using the official section field.
 function getExamType(record) {
     const section = String(record?.section ?? "")
         .trim()
@@ -183,14 +170,11 @@ function updateProgramBadge(currentRecord, allRecords = []) {
     }
 
     const today = getTodayString();
-
-    // Find the nearest upcoming examination date.
     const upcomingDates = records
         .map(record => dateKey(record))
         .filter(date => date && date >= today)
         .sort();
 
-    // If no upcoming exam exists, use the latest available exam date.
     const selectedDate = upcomingDates.length > 0
         ? upcomingDates[0]
         : records
@@ -203,12 +187,9 @@ function updateProgramBadge(currentRecord, allRecords = []) {
         return;
     }
 
-    // Consider only exams scheduled on the selected date.
     const selectedRecords = records.filter(
         record => dateKey(record) === selectedDate
     );
-
-    // Category priority: Regular > Back Paper > Debarred.
     const priority = {
         regular: 1,
         back: 2,
@@ -219,12 +200,9 @@ function updateProgramBadge(currentRecord, allRecords = []) {
         .map(record => getExamType(record))
         .sort((a, b) => priority[a] - priority[b])[0];
 
-    // Keep only the highest-priority category.
     const filteredRecords = selectedRecords.filter(
         record => getExamType(record) === selectedCategory
     );
-
-    // Remove duplicate program + semester + section combinations.
     const uniqueBadges = new Map();
 
     filteredRecords.forEach(record => {
@@ -268,20 +246,8 @@ function updateProgramBadge(currentRecord, allRecords = []) {
 
         badge.appendChild(element);
     });
-
-    console.log("Selected program badge:", {
-        selectedDate,
-        selectedCategory,
-        badges: [...uniqueBadges.values()]
-    });
 }
 
-
-/* =========================================================
-   EXAM CARD (ticket layout)
-========================================================= */
-
-// Big Room / Seat cell
 function createCell(iconClasses, label, value, variant) {
     const cell = document.createElement("div");
     cell.className = `seat-cell ${variant}`;
@@ -294,7 +260,6 @@ function createCell(iconClasses, label, value, variant) {
     return cell;
 }
 
-// Course code / Shift row
 function createDetail(iconClasses, label, value, sub = "") {
     const item = document.createElement("div");
     item.className = "detail";
@@ -326,7 +291,6 @@ function createExamCard(record, isPast = false) {
         ? "exam-card ticket is-past"
         : "exam-card ticket is-upcoming";
 
-    /* Header */
     const header = document.createElement("div");
     header.className = "exam-card-header";
 
@@ -345,7 +309,6 @@ function createExamCard(record, isPast = false) {
 
     card.appendChild(header);
 
-    /* Room and Seat */
     const topGrid = document.createElement("div");
     topGrid.className = "exam-grid-top";
 
@@ -356,14 +319,12 @@ function createExamCard(record, isPast = false) {
 
     card.appendChild(topGrid);
 
-    /* Divider */
     const divider = document.createElement("div");
     divider.className = "ticket-divider";
     divider.setAttribute("aria-hidden", "true");
 
     card.appendChild(divider);
 
-    /* Course code and Shift */
     const bottomGrid = document.createElement("div");
     bottomGrid.className = "exam-grid-bottom";
 
@@ -373,7 +334,6 @@ function createExamCard(record, isPast = false) {
             "Course code",
             record.courseCode || "N/A"
         ),
-
         createDetail(
             "fa-solid fa-clock",
             "Shift",
@@ -386,8 +346,6 @@ function createExamCard(record, isPast = false) {
 
     return card;
 }
-
-/* ---------- NO UPCOMING EXAMS CARD ---------- */
 
 function renderNoUpcomingExamsCard() {
     const wrapper = document.createElement("div");
@@ -408,8 +366,6 @@ function renderNoUpcomingExamsCard() {
 
     return wrapper;
 }
-
-/* ---------- AVATAR + COUNTS ---------- */
 
 function syncDashboardUi() {
     if (studentAvatar && studentNameDisplay) {
@@ -444,10 +400,6 @@ function syncDashboardUi() {
         pastCount.textContent = String(pastTotal);
     }
 }
-
-/* =========================================================
-   VISITOR COUNTER + LIVE STUDENTS ONLINE
-========================================================= */
 
 const HEARTBEAT_MS = 15000;
 let memoryVisitorId = null;
@@ -485,7 +437,6 @@ function getVisitorId() {
         }
 
         return id;
-
     } catch (error) {
         if (!memoryVisitorId) memoryVisitorId = generateId();
         return memoryVisitorId;
@@ -535,7 +486,6 @@ function showOnlineTotal(count) {
     }
 }
 
-// Read-only: fetching never increments.
 async function loadVisitorCount() {
     try {
         const response = await fetch(`${API_BASE_URL}/visitors`);
@@ -551,7 +501,6 @@ async function loadVisitorCount() {
                 ? data
                 : data.totalVisitors ?? data.visitorCount ?? data.count
         );
-
     } catch (error) {
         showVisitorTotal(null);
         console.warn("Visitor count unavailable:", error.message);
@@ -570,7 +519,6 @@ async function registerVisit() {
 
         const data = await response.json();
         showVisitorTotal(data.totalVisitors);
-
     } catch (error) {
         console.warn("Visit registration failed:", error.message);
         await loadVisitorCount();
@@ -586,7 +534,6 @@ async function sendHeartbeat() {
         });
 
         showOnlineTotal(data.studentsOnline);
-
     } catch (error) {
         showOnlineTotal(null);
         console.warn("Online heartbeat failed:", error.message);
@@ -602,9 +549,7 @@ function leaveSite() {
                 { type: "application/json" }
             )
         );
-    } catch (error) {
-        // Server timeout handles the session.
-    }
+    } catch (error) {}
 }
 
 function startTracking() {
@@ -623,8 +568,6 @@ function startTracking() {
 
     window.addEventListener("pagehide", leaveSite);
 }
-
-/* ---------- PAST EXAMS ACCORDION ---------- */
 
 let isPastExamsOpen = false;
 
@@ -645,8 +588,6 @@ if (togglePastExams) {
         setPastExamsOpen(!isPastExamsOpen);
     });
 }
-
-/* ---------- SEARCH FORM ---------- */
 
 function dateKey(record) {
     return normalizeDate(record.examDate);
@@ -705,20 +646,6 @@ if (searchForm) {
                 return;
             }
 
-            console.log("========== SEAT FINDER DEBUG ==========");
-            console.log("Total records:", records.length);
-
-            records.forEach((record, index) => {
-                console.log("Record:", index + 1, record);
-                console.log("Program:", record.program);
-                console.log("Semester:", record.semester);
-                console.log("Section:", record.section);
-                console.log("Category:", getExamType(record));
-            });
-
-            console.log("======================================");
-
-            // Select a non-debarred record for common student details.
             const currentRecord =
                 records.find(record => !isDebarredRecord(record)) || records[0];
 
@@ -732,10 +659,7 @@ if (searchForm) {
                     currentRecord.admissionNo || admissionNo;
             }
 
-
-           // Display the branch for the nearest upcoming examination date.
-           updateProgramBadge(currentRecord, records);
-            /* Upcoming vs completed */
+            updateProgramBadge(currentRecord, records);
             const todayStr = getTodayString();
 
             const upcomingExams = records
@@ -788,7 +712,6 @@ if (searchForm) {
                 });
             }
 
-            /* Show dashboard */
             if (searchView) searchView.hidden = true;
             if (dashboardView) dashboardView.hidden = false;
 
@@ -819,8 +742,6 @@ if (searchForm) {
         }
     });
 }
-
-/* ---------- SEARCH AGAIN ---------- */
 
 if (searchAgainBtn) {
     searchAgainBtn.addEventListener("click", function () {
@@ -859,8 +780,6 @@ if (searchAgainBtn) {
     });
 }
 
-/* ---------- DISCLAIMER MODAL ---------- */
-
 if (disclaimerButton && disclaimerDialog) {
     disclaimerButton.addEventListener("click", () => {
         disclaimerDialog.showModal();
@@ -879,7 +798,6 @@ if (okDisclaimer && disclaimerDialog) {
     });
 }
 
-// Click on the dark backdrop closes it.
 if (disclaimerDialog) {
     disclaimerDialog.addEventListener("click", event => {
         if (event.target === disclaimerDialog) {
@@ -888,232 +806,221 @@ if (disclaimerDialog) {
     });
 }
 
+
 /* =========================================================
-   FEEDBACK MODAL
-========================================================= */
+   FEEDBACK POPUP CONTROLLER (Synchronized with new HTML)
+   ========================================================= */
+(() => {
+    "use strict";
 
-document.addEventListener("DOMContentLoaded", function () {
-    const feedbackModal = document.getElementById("feedbackModal");
-    const openFeedback = document.getElementById("openFeedback");
-    const closeFeedback = document.getElementById("closeFeedback");
+    const modal = document.getElementById("fbModal");
+    const openBtn = document.getElementById("openFeedback");
+    const closeBtn = document.getElementById("fbClose");
+    const form = document.getElementById("fbForm");
+    const formView = document.getElementById("fbFormView");
+    const okView = document.getElementById("fbSuccessView");
+    const doneBtn = document.getElementById("fbDone");
 
-    const feedbackForm = document.getElementById("feedbackForm");
-    const feedbackFormView = document.getElementById("feedbackFormView");
-    const feedbackSuccessView = document.getElementById("feedbackSuccessView");
-    const feedbackDoneBtn = document.getElementById("feedbackDoneBtn");
+    const ratingInput = document.getElementById("fbRating");
+    const ratingLabel = document.getElementById("fbRatingLabel");
+    const accInput = document.getElementById("fbAccurate");
+    const accHint = document.getElementById("fbAccHint");
 
-    const ratingInput = document.getElementById("ratingInput");
-    const ratingLabel = document.getElementById("ratingLabel");
+    const comment = document.getElementById("fbComment");
+    const userName = document.getElementById("fbName");
+    const errorEl = document.getElementById("fbError");
 
-    const commentInput = document.getElementById("comment");
-    const userNameInput = document.getElementById("userName");
-    const feedbackError = document.getElementById("feedbackError");
+    if (!modal || !form) return;
 
-    const stars = document.querySelectorAll(".star-btn");
+    const stars = [...document.querySelectorAll("#fbStars .star-btn")];
+    const accBtns = [...document.querySelectorAll(".acc-btn")];
+    const TEXT = { 1: "Very Poor", 2: "Poor", 3: "Average", 4: "Good", 5: "Excellent" };
 
-    if (!feedbackModal || !openFeedback || !feedbackForm) {
-        console.error("Feedback modal: required HTML elements are missing.");
-        return;
-    }
-
+    let lastFocus = null;
     let resetTimer = null;
 
-    function showFeedbackError(text, color = "#dc2626") {
-        if (feedbackError) {
-            feedbackError.textContent = text;
-            feedbackError.style.color = color;
-        }
-    }
-
-    function clearFeedbackError() {
-        showFeedbackError("");
-    }
-
-    function openFeedbackPopup(event) {
-        if (event) event.preventDefault();
-
-        window.clearTimeout(resetTimer);
-
-        if (feedbackFormView) feedbackFormView.hidden = false;
-        if (feedbackSuccessView) feedbackSuccessView.hidden = true;
-
-        feedbackModal.classList.add("show");
-        feedbackModal.setAttribute("aria-hidden", "false");
-
-        clearFeedbackError();
-    }
-
-    openFeedback.addEventListener("click", openFeedbackPopup);
-
-    function resetFeedbackForm() {
-        feedbackForm.reset();
-
-        if (ratingInput) ratingInput.value = "";
-        if (ratingLabel) ratingLabel.textContent = "Select rating";
-
-        stars.forEach(star => {
-            star.classList.remove("active", "hover");
-        });
-
-        clearFeedbackError();
-    }
-
-    function closeFeedbackPopup() {
-        feedbackModal.classList.remove("show");
-        feedbackModal.setAttribute("aria-hidden", "true");
-
-        window.clearTimeout(resetTimer);
-
-        resetTimer = window.setTimeout(() => {
-            if (feedbackFormView) feedbackFormView.hidden = false;
-            if (feedbackSuccessView) feedbackSuccessView.hidden = true;
-
-            resetFeedbackForm();
-        }, 200);
-    }
-
-    if (closeFeedback) {
-        closeFeedback.addEventListener("click", closeFeedbackPopup);
-    }
-
-    if (feedbackDoneBtn) {
-        feedbackDoneBtn.addEventListener("click", closeFeedbackPopup);
-    }
-
-    feedbackModal.addEventListener("click", event => {
-        if (event.target === feedbackModal) {
-            closeFeedbackPopup();
-        }
-    });
-
-    document.addEventListener("keydown", event => {
-        if (
-            event.key === "Escape" &&
-            feedbackModal.classList.contains("show")
-        ) {
-            closeFeedbackPopup();
-        }
-    });
-
-    /* ---------- STAR RATING ---------- */
-
-    const ratingTexts = {
-        1: "Very Poor",
-        2: "Poor",
-        3: "Average",
-        4: "Good",
-        5: "Excellent"
+    const setError = text => {
+        if (errorEl) errorEl.textContent = text;
     };
 
-    stars.forEach(star => {
-        star.addEventListener("click", () => {
-            const value = Number(star.getAttribute("data-value"));
+    /* ---------- Stars ---------- */
+    function paint(n, cls) {
+        stars.forEach(s => s.classList.toggle(cls, Number(s.dataset.value) <= n));
+    }
 
-            if (!Number.isInteger(value) || value < 1 || value > 5) {
-                return;
+    function announce(text) {
+        if (!ratingLabel) return;
+        ratingLabel.textContent = text;
+        ratingLabel.classList.remove("swap");
+        void ratingLabel.offsetWidth;
+        ratingLabel.classList.add("swap");
+    }
+
+    function setRating(n) {
+        if (ratingInput) ratingInput.value = String(n);
+        paint(n, "active");
+        announce(TEXT[n]);
+        setError("");
+
+        stars.forEach((s, i) => {
+            s.classList.remove("pop");
+            if (i < n) {
+                s.style.setProperty("--d", `${i * 70}ms`);
+                void s.offsetWidth;
+                s.classList.add("pop");
             }
-
-            if (ratingInput) ratingInput.value = String(value);
-            if (ratingLabel) ratingLabel.textContent = ratingTexts[value];
-
-            stars.forEach(item => {
-                const starValue = Number(item.getAttribute("data-value"));
-                item.classList.toggle("active", starValue <= value);
-            });
-
-            clearFeedbackError();
         });
+    }
 
-        star.addEventListener("mouseenter", () => {
-            const value = Number(star.getAttribute("data-value"));
-
-            stars.forEach(item => {
-                const starValue = Number(item.getAttribute("data-value"));
-                item.classList.toggle("hover", starValue <= value);
-            });
-        });
-
-        star.addEventListener("mouseleave", () => {
-            stars.forEach(item => item.classList.remove("hover"));
-        });
+    stars.forEach(star => {
+        const value = Number(star.dataset.value);
+        star.addEventListener("click", () => setRating(value));
+        star.addEventListener("mouseenter", () => paint(value, "hover"));
+        star.addEventListener("mouseleave", () => paint(0, "hover"));
+        star.addEventListener("focus", () => paint(value, "hover"));
+        star.addEventListener("blur", () => paint(0, "hover"));
     });
 
-    /* ---------- SUBMIT FEEDBACK ---------- */
+    /* ---------- "Did you find your details accurate?" ---------- */
+    function setAccurate(value) {
+        if (accInput) accInput.value = value;
 
-    feedbackForm.addEventListener("submit", async event => {
+        accBtns.forEach(btn => {
+            const on = btn.dataset.value === value;
+            btn.classList.toggle("selected", on);
+            btn.setAttribute("aria-pressed", String(on));
+            if (on) {
+                btn.classList.remove("pop");
+                void btn.offsetWidth;
+                btn.classList.add("pop");
+            }
+        });
+
+        if (accHint) accHint.classList.toggle("show", value === "no");
+        setError("");
+    }
+
+    accBtns.forEach(btn => btn.addEventListener("click", () => setAccurate(btn.dataset.value)));
+
+    /* ---------- Open / Close / Reset ---------- */
+    function resetForm() {
+        form.reset();
+        if (ratingInput) ratingInput.value = "";
+        if (accInput) accInput.value = "";
+        announce("Select rating");
+        paint(0, "active");
+        paint(0, "hover");
+        stars.forEach(s => s.classList.remove("pop"));
+        accBtns.forEach(b => {
+            b.classList.remove("selected", "pop");
+            b.setAttribute("aria-pressed", "false");
+        });
+        if (accHint) accHint.classList.remove("show");
+        setError("");
+    }
+
+    function openModal(event) {
+        if (event) event.preventDefault();
+        clearTimeout(resetTimer);
+
+        if (formView) formView.hidden = false;
+        if (okView) okView.hidden = true;
+        setError("");
+
+        lastFocus = document.activeElement;
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        setTimeout(() => {
+            if (closeBtn) closeBtn.focus();
+        }, 60);
+    }
+
+    function closeModal() {
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => {
+            if (formView) formView.hidden = false;
+            if (okView) okView.hidden = true;
+            resetForm();
+        }, 250);
+
+        if (lastFocus && typeof lastFocus.focus === "function") {
+            lastFocus.focus();
+        }
+    }
+
+    if (openBtn) openBtn.addEventListener("click", openModal);
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+    if (doneBtn) doneBtn.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", e => {
+        if (e.target === modal) closeModal();
+    });
+
+    document.addEventListener("keydown", e => {
+        if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
+    });
+
+    /* ---------- Submit Form ---------- */
+    form.addEventListener("submit", async event => {
         event.preventDefault();
 
-        const submitButton = feedbackForm.querySelector(".feedback-submit");
-
-        if (submitButton && submitButton.disabled) return;
+        const btn = form.querySelector(".feedback-submit");
+        if (!btn || btn.disabled) return;
 
         const rating = Number(ratingInput?.value || 0);
-        const comment = String(commentInput?.value ?? "").trim();
-        const userName = String(userNameInput?.value ?? "").trim();
+        const text = comment?.value.trim() || "";
+        const name = userName?.value.trim() || "";
+        const accurateVal = accInput?.value || "";
 
-        if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
-            showFeedbackError("Please select a rating.");
+        if (!(rating >= 1 && rating <= 5)) return setError("Please select a rating.");
+        if (!accurateVal) return setError("Please tell us if your details were accurate.");
+        if (!text) {
+            setError("Please enter your comments.");
+            if (comment) comment.focus();
             return;
         }
 
-        if (!comment) {
-            showFeedbackError("Please enter your comments.");
-            commentInput?.focus();
-            return;
-        }
-
-        const feedback = {
-            rating,
-            comment,
-            name: userName || null
-        };
-
-        if (submitButton) {
-            submitButton.disabled = true;
-            submitButton.textContent = "Submitting...";
-        }
-
-        clearFeedbackError();
+        const label = btn.querySelector("span");
+        btn.disabled = true;
+        btn.classList.add("is-loading");
+        if (label) label.textContent = "Submitting...";
+        setError("");
 
         try {
-            const response = await fetch(`${API_BASE_URL}/feedback`, {
+            const base = typeof API_BASE_URL !== "undefined" ? API_BASE_URL : "/api";
+
+            const response = await fetch(`${base}/feedback`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(feedback)
+                body: JSON.stringify({
+                    rating,
+                    comment: text,
+                    name: name || null,
+                    detailsAccurate: accurateVal === "yes"
+                })
             });
 
-            if (!response.ok) {
-                const errorText = await response.text();
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-                console.error("Feedback API error:", {
-                    status: response.status,
-                    response: errorText
-                });
-
-                throw new Error(`Server returned ${response.status}.`);
-            }
-
-            if (feedbackFormView) feedbackFormView.hidden = true;
-            if (feedbackSuccessView) feedbackSuccessView.hidden = false;
+            if (formView) formView.hidden = true;
+            if (okView) okView.hidden = false;
 
         } catch (error) {
             console.error("Feedback submission failed:", error);
-
-            showFeedbackError(
-                "Unable to submit feedback. Please try again."
-            );
+            setError("Unable to submit feedback. Please try again.");
 
         } finally {
-            if (submitButton) {
-                submitButton.disabled = false;
-                submitButton.textContent = "Submit Feedback";
-            }
+            btn.disabled = false;
+            btn.classList.remove("is-loading");
+            if (label) label.textContent = "Submit Feedback";
         }
     });
-});
-
-/* ---------- INITIAL PAGE LOAD ---------- */
+})();
 
 loadVisitorCount();
 startTracking();
-

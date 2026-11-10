@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# Node.js
+node_modules/
+npm-debug.log*

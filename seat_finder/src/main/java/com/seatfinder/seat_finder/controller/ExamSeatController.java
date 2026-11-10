@@ -35,6 +35,7 @@ public class ExamSeatController {
     public List<ExamSeatResponse> searchByQuery(@RequestParam String admissionNo) {
         return search(admissionNo);
     }
+
     @GetMapping("/{admissionNo}")
     public List<ExamSeatResponse> searchByPath(@PathVariable String admissionNo) {
         return search(admissionNo);
@@ -60,7 +61,6 @@ public class ExamSeatController {
         List<ExamSeat> seats =
                 examSeatRepository.findByAdmissionNoOrderByExamDateAscShiftAsc(cleaned);
 
-
         if (seats.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
@@ -84,6 +84,7 @@ public class ExamSeatController {
                 ))
                 .toList();
     }
+
     private String getExamTime(String shift) {
         if (shift == null) {
             return "Not available";

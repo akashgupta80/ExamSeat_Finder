@@ -15,7 +15,6 @@ public class OnlineStudentCleanupTask {
         this.onlineStudentRepository = onlineStudentRepository;
     }
 
-    // Every minute: delete sessions not seen for 5 minutes (keeps the table small).
     @Scheduled(fixedRate = 60_000, initialDelay = 60_000)
     public void removeStaleSessions() {
         onlineStudentRepository.deleteStale(LocalDateTime.now().minusMinutes(5));

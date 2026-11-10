@@ -1,4 +1,3 @@
-
 package com.seatfinder.seat_finder.controller;
 
 import com.seatfinder.seat_finder.entity.Feedback;
@@ -29,15 +28,14 @@ public class FeedbackController {
     @PostMapping
     public Feedback submitFeedback(@RequestBody Feedback feedback) {
 
-        if (feedback == null) {
+        if (feedback  ==null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Feedback data is required."
             );
         }
 
-        // Validate rating
-        if (feedback.getRating() == null
+        if (feedback.getRating()  ==null
                 || feedback.getRating() < 1
                 || feedback.getRating() > 5) {
 
@@ -47,8 +45,7 @@ public class FeedbackController {
             );
         }
 
-        // Validate comment
-        if (feedback.getComment() == null
+        if (feedback.getComment()  ==null
                 || feedback.getComment().isBlank()) {
 
             throw new ResponseStatusException(
@@ -68,7 +65,6 @@ public class FeedbackController {
 
         feedback.setComment(comment);
 
-        // Validate optional name
         if (feedback.getName() != null) {
             String name = feedback.getName().trim();
 

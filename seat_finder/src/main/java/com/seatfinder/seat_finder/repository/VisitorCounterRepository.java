@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface VisitorCounterRepository
         extends JpaRepository<VisitorCounter, Integer> {
 
-    // Atomically increase the total page-visit count by one.
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
     @Query("""

@@ -1,0 +1,9 @@
+
+{
+  "name": "exam-seat-finder",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "mysql2": "^3.14.0"
+  }
+}

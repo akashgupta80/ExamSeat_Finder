@@ -16,19 +16,16 @@ public interface OnlineStudentRepository extends JpaRepository<OnlineStudent, Lo
 
     long countByLastSeenAfter(LocalDateTime time);
 
-    // Refresh "last seen". Returns 0 when the session does not exist yet.
     @Modifying(clearAutomatically = true)
     @Transactional
     @Query("UPDATE OnlineStudent o SET o.lastSeen = :now WHERE o.sessionId = :sessionId")
     int touch(@Param("sessionId") String sessionId, @Param("now") LocalDateTime now);
 
-    // Tab closed: remove this session immediately.
     @Modifying(clearAutomatically = true)
     @Transactional
     @Query("DELETE FROM OnlineStudent o WHERE o.sessionId = :sessionId")
     int forget(@Param("sessionId") String sessionId);
 
-    // Scheduled cleanup of old rows.
     @Modifying(clearAutomatically = true)
     @Transactional
     @Query("DELETE FROM OnlineStudent o WHERE o.lastSeen < :cutoff")

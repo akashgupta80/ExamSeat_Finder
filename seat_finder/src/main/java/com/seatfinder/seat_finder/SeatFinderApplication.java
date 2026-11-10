@@ -9,5 +9,4 @@ public class SeatFinderApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SeatFinderApplication.class, args);
 	}
-
 }
