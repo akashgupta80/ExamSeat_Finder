@@ -31,13 +31,10 @@ public class ExamSeatController {
         this.examSeatRepository = examSeatRepository;
     }
 
-    // New (recommended): /api/exam-seats?admissionNo=ABC/123  -> safe for "/" and "."
     @GetMapping
     public List<ExamSeatResponse> searchByQuery(@RequestParam String admissionNo) {
         return search(admissionNo);
     }
-
-    // Old URL still works: /api/exam-seats/12345
     @GetMapping("/{admissionNo}")
     public List<ExamSeatResponse> searchByPath(@PathVariable String admissionNo) {
         return search(admissionNo);
@@ -87,8 +84,6 @@ public class ExamSeatController {
                 ))
                 .toList();
     }
-
-    // Accepts "Shift 1", "shift-1", "1", 1 ... (previously only "shift 1" worked)
     private String getExamTime(String shift) {
         if (shift == null) {
             return "Not available";
