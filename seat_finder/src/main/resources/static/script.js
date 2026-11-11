@@ -1,16 +1,13 @@
 const isLocalFrontend =
-    location.protocol === "file:" ||
-    (
-        ["localhost", "127.0.0.1"].includes(location.hostname) &&
-        location.port !== "8080"
-    );
+    location.hostname === "localhost" ||
+    location.hostname === "127.0.0.1" ||
+    location.protocol === "file:";
 
 const API_BASE_URL = isLocalFrontend
     ? "http://localhost:8080/api"
     : "https://examseat-finder.onrender.com/api";
 
 console.log("Seat Finder API:", API_BASE_URL);
-
 const searchView = document.getElementById("searchView");
 const dashboardView = document.getElementById("dashboardView");
 const searchForm = document.getElementById("searchForm");
@@ -47,8 +44,8 @@ const shiftTimings = {
 };
 
 function getShiftNumber(shift) {
-    const match = String(shift ?? "").trim().match(/\d+/);
-    return match && shiftTimings[match[0]] ? match[0] : null;
+    const number = String(shift ?? "").trim().match(/\d+/)?.[0];
+    return shiftTimings[number] ? number : null;
 }
 
 function formatShift(shift) {
@@ -66,6 +63,7 @@ function getTodayString() {
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, "0");
     const day = String(today.getDate()).padStart(2, "0");
+
     return `${year}-${month}-${day}`;
 }
 
@@ -112,12 +110,12 @@ function showMessage(text, type = "info") {
 function createTextElement(tag, text, className = "") {
     const element = document.createElement(tag);
 
-    element.textContent =
-        text === null || text === undefined || text === ""
-            ? "Not available"
-            : String(text);
+    element.textContent = text == null || text === ""
+        ? "Not available"
+        : String(text);
 
     if (className) element.className = className;
+
     return element;
 }
 
@@ -125,6 +123,7 @@ function createIcon(classes) {
     const icon = document.createElement("i");
     icon.className = classes;
     icon.setAttribute("aria-hidden", "true");
+
     return icon;
 }
 
@@ -134,19 +133,22 @@ function getExamType(record) {
         .toLowerCase()
         .replace(/\s+/g, " ");
 
-    if (section.includes("debr")) {
-        return "debarred";
-    }
-
-    if (section.includes("back paper")) {
-        return "back";
-    }
+    if (section.includes("debr")) return "debarred";
+    if (section.includes("back paper")) return "back";
 
     return "regular";
 }
 
 function isDebarredRecord(record) {
     return getExamType(record) === "debarred";
+}
+
+function dateKey(record) {
+    return normalizeDate(record.examDate);
+}
+
+function shiftKey(record) {
+    return getShiftNumber(record.shift) || "9";
 }
 
 function updateProgramBadge(currentRecord, allRecords = []) {
@@ -159,72 +161,55 @@ function updateProgramBadge(currentRecord, allRecords = []) {
 
     badge.replaceChildren();
 
-    const records = Array.isArray(allRecords) ? allRecords : [];
-
-    if (records.length === 0) {
-        return;
-    }
+    if (!Array.isArray(allRecords) || allRecords.length === 0) return;
 
     const today = getTodayString();
-    const upcomingDates = records
-        .map(record => dateKey(record))
+
+    const upcomingDates = allRecords
+        .map(dateKey)
         .filter(date => date && date >= today)
         .sort();
 
-    const selectedDate = upcomingDates.length > 0
+    const selectedDate = upcomingDates.length
         ? upcomingDates[0]
-        : records
-            .map(record => dateKey(record))
-            .filter(Boolean)
-            .sort()
-            .at(-1);
+        : allRecords.map(dateKey).filter(Boolean).sort().at(-1);
 
-    if (!selectedDate) {
-        return;
-    }
+    if (!selectedDate) return;
 
-    const selectedRecords = records.filter(
-        record => dateKey(record) === selectedDate
-    );
     const priority = {
         regular: 1,
         back: 2,
         debarred: 3
     };
 
+    const selectedRecords = allRecords.filter(
+        record => dateKey(record) === selectedDate
+    );
+
     const selectedCategory = selectedRecords
-        .map(record => getExamType(record))
+        .map(getExamType)
         .sort((a, b) => priority[a] - priority[b])[0];
 
-    const filteredRecords = selectedRecords.filter(
-        record => getExamType(record) === selectedCategory
-    );
     const uniqueBadges = new Map();
 
-    filteredRecords.forEach(record => {
-        const type = getExamType(record);
+    selectedRecords
+        .filter(record => getExamType(record) === selectedCategory)
+        .forEach(record => {
+            const type = getExamType(record);
+            const program = String(record.program || "Not available").trim();
+            const semester = String(record.semester || "Not available").trim();
 
-        const program = String(record.program || "Not available").trim();
-        const semester = String(record.semester || "Not available").trim();
+            let section = String(record.section || "Not available").trim();
 
-        let section = String(record.section || "Not available").trim();
+            if (type === "back") section = "Back Paper";
+            if (type === "debarred") section = "Debr. Exam";
 
-        if (type === "back") {
-            section = "Back Paper";
-        } else if (type === "debarred") {
-            section = "Debr. Exam";
-        }
+            const key = `${program.toLowerCase()}|${semester.toLowerCase()}|${section.toLowerCase()}`;
 
-        const key = `${program.toLowerCase()}|${semester.toLowerCase()}|${section.toLowerCase()}`;
+            if (uniqueBadges.has(key)) return;
 
-        if (!uniqueBadges.has(key)) {
-            uniqueBadges.set(key, {
-                program,
-                semester,
-                section
-            });
-        }
-    });
+            uniqueBadges.set(key, { program, semester, section });
+        });
 
     const classNames = {
         regular: "regular-program-details",
@@ -234,9 +219,7 @@ function updateProgramBadge(currentRecord, allRecords = []) {
 
     uniqueBadges.forEach(details => {
         const element = document.createElement("div");
-
         element.className = classNames[selectedCategory];
-
         element.textContent =
             `${details.program} | ${details.semester} | ${details.section}`;
 
@@ -253,6 +236,7 @@ function createCell(iconClasses, label, value, variant) {
     labelRow.append(createIcon(iconClasses), label);
 
     cell.append(labelRow, createTextElement("strong", value, "cell-value"));
+
     return cell;
 }
 
@@ -277,12 +261,12 @@ function createDetail(iconClasses, label, value, sub = "") {
     }
 
     item.append(iconBox, text);
+
     return item;
 }
 
 function createExamCard(record, isPast = false) {
     const card = document.createElement("article");
-
     card.className = isPast
         ? "exam-card ticket is-past"
         : "exam-card ticket is-upcoming";
@@ -325,11 +309,7 @@ function createExamCard(record, isPast = false) {
     bottomGrid.className = "exam-grid-bottom";
 
     bottomGrid.append(
-        createDetail(
-            "fa-solid fa-book-open",
-            "Course code",
-            record.courseCode || "N/A"
-        ),
+        createDetail("fa-solid fa-book-open", "Course code", record.courseCode || "N/A"),
         createDetail(
             "fa-solid fa-clock",
             "Shift",
@@ -365,18 +345,14 @@ function renderNoUpcomingExamsCard() {
 
 function syncDashboardUi() {
     if (studentAvatar && studentNameDisplay) {
-        const parts = studentNameDisplay.textContent
-            .trim()
-            .split(/\s+/)
-            .filter(Boolean);
+        const parts = studentNameDisplay.textContent.trim().split(/\s+/).filter(Boolean);
 
-        studentAvatar.textContent =
-            parts.length === 0
-                ? "?"
-                : (
-                    parts[0][0] +
-                    (parts.length > 1 ? parts[parts.length - 1][0] : "")
-                ).toUpperCase();
+        studentAvatar.textContent = parts.length === 0
+            ? "?"
+            : (
+                parts[0][0] +
+                (parts.length > 1 ? parts[parts.length - 1][0] : "")
+            ).toUpperCase();
     }
 
     const upcomingTotal = upcomingExamContainer
@@ -397,6 +373,7 @@ function syncDashboardUi() {
     }
 }
 
+// Visitor tracking
 const HEARTBEAT_MS = 15000;
 let memoryVisitorId = null;
 
@@ -415,8 +392,9 @@ function generateId() {
         }
     }
 
-    return Array.from(bytes, b =>
-        b.toString(16).padStart(2, "0")
+    return Array.from(
+        bytes,
+        byte => byte.toString(16).padStart(2, "0")
     ).join("");
 }
 
@@ -435,6 +413,7 @@ function getVisitorId() {
         return id;
     } catch (error) {
         if (!memoryVisitorId) memoryVisitorId = generateId();
+
         return memoryVisitorId;
     }
 }
@@ -459,9 +438,7 @@ function showVisitorTotal(count) {
     if (!visitorCount) return;
 
     visitorCount.textContent =
-        count !== undefined &&
-        count !== null &&
-        Number.isFinite(Number(count))
+        count != null && Number.isFinite(Number(count))
             ? Number(count).toLocaleString("en-IN")
             : "--";
 }
@@ -469,10 +446,7 @@ function showVisitorTotal(count) {
 function showOnlineTotal(count) {
     if (!onlineCount) return;
 
-    const valid =
-        count !== undefined &&
-        count !== null &&
-        Number.isFinite(Number(count));
+    const valid = count != null && Number.isFinite(Number(count));
 
     onlineCount.textContent = valid ? String(Number(count)) : "--";
 
@@ -545,7 +519,9 @@ function leaveSite() {
                 { type: "application/json" }
             )
         );
-    } catch (error) {}
+    } catch (error) {
+
+    }
 }
 
 function startTracking() {
@@ -565,6 +541,315 @@ function startTracking() {
     window.addEventListener("pagehide", leaveSite);
 }
 
+(() => {
+    "use strict";
+
+    const modal = document.getElementById("fbModal");
+    const openBtn = document.getElementById("openFeedback");
+    const closeBtn = document.getElementById("fbClose");
+    const doneBtn = document.getElementById("fbDone");
+
+    const form = document.getElementById("fbForm");
+    const formView = document.getElementById("fbFormView");
+    const successView = document.getElementById("fbSuccessView");
+
+    const stars = document.querySelectorAll("#fbStars .star-btn");
+    const ratingInput = document.getElementById("fbRating");
+    const ratingLabel = document.getElementById("fbRatingLabel");
+
+    const accuracyButtons = document.querySelectorAll(
+        "#fbModal .acc-btn"
+    );
+    const accurateInput = document.getElementById("fbAccurate");
+    const accuracyHint = document.getElementById("fbAccHint");
+
+    const commentInput = document.getElementById("fbComment");
+    const nameInput = document.getElementById("fbName");
+    const errorMessage = document.getElementById("fbError");
+
+    const submitButton = form?.querySelector(".feedback-submit");
+
+    const ratingText = {
+        1: "Very Poor",
+        2: "Poor",
+        3: "Average",
+        4: "Good",
+        5: "Excellent"
+    };
+
+    if (
+        !modal || !openBtn || !closeBtn || !form ||
+        !formView || !successView || !ratingInput ||
+        !accurateInput || !submitButton
+    ) {
+        console.error("Feedback form: required HTML elements are missing.");
+        return;
+    }
+
+    let lastFocusedElement = null;
+
+    function showError(message = "") {
+        if (errorMessage) {
+            errorMessage.textContent = message;
+        }
+    }
+
+    function animateElement(element) {
+        element.classList.remove("pop");
+        void element.offsetWidth;
+        element.classList.add("pop");
+    }
+
+    function updateStars(rating, className) {
+        stars.forEach(star => {
+            const value = Number(star.dataset.value);
+
+            star.classList.toggle(
+                className,
+                value <= rating
+            );
+        });
+    }
+
+    function setRating(rating) {
+        ratingInput.value = String(rating);
+
+        updateStars(rating, "active");
+
+        if (ratingLabel) {
+            ratingLabel.textContent = ratingText[rating];
+            animateElement(ratingLabel);
+        }
+
+        stars.forEach(star => {
+            const value = Number(star.dataset.value);
+
+            if (value <= rating) {
+                animateElement(star);
+            } else {
+                star.classList.remove("pop");
+            }
+        });
+
+        showError();
+    }
+
+    stars.forEach(star => {
+        const rating = Number(star.dataset.value);
+
+        star.addEventListener("click", () => {
+            setRating(rating);
+        });
+
+        star.addEventListener("mouseenter", () => {
+            updateStars(rating, "hover");
+        });
+
+        star.addEventListener("mouseleave", () => {
+            updateStars(0, "hover");
+        });
+
+        star.addEventListener("focus", () => {
+            updateStars(rating, "hover");
+        });
+
+        star.addEventListener("blur", () => {
+            updateStars(0, "hover");
+        });
+    });
+
+    function setAccuracy(value) {
+        accurateInput.value = value;
+
+        accuracyButtons.forEach(button => {
+            const selected = button.dataset.value === value;
+
+            button.classList.toggle("selected", selected);
+            button.setAttribute("aria-pressed", String(selected));
+
+            if (selected) {
+                animateElement(button);
+            } else {
+                button.classList.remove("pop");
+            }
+        });
+
+        if (accuracyHint) {
+            accuracyHint.classList.toggle("show", value === "no");
+        }
+
+        showError();
+    }
+
+    accuracyButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            setAccuracy(button.dataset.value);
+        });
+    });
+
+    function resetFeedbackForm() {
+        form.reset();
+
+        ratingInput.value = "";
+        accurateInput.value = "";
+
+        updateStars(0, "active");
+        updateStars(0, "hover");
+
+        stars.forEach(star => {
+            star.classList.remove("pop");
+        });
+
+        accuracyButtons.forEach(button => {
+            button.classList.remove("selected", "pop");
+            button.setAttribute("aria-pressed", "false");
+        });
+
+        if (ratingLabel) {
+            ratingLabel.textContent = "Select rating";
+        }
+
+        if (accuracyHint) {
+            accuracyHint.classList.remove("show");
+        }
+
+        showError();
+    }
+    function openModal(event) {
+        event.preventDefault();
+
+        resetFeedbackForm();
+
+        formView.hidden = false;
+        successView.hidden = true;
+
+        lastFocusedElement = document.activeElement;
+
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+
+        document.body.style.overflow = "hidden";
+
+        closeBtn.focus();
+    }
+
+    function closeModal() {
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden", "true");
+
+        document.body.style.overflow = "";
+
+        if (lastFocusedElement) {
+            lastFocusedElement.focus();
+        }
+        setTimeout(() => {
+            formView.hidden = false;
+            successView.hidden = true;
+            resetFeedbackForm();
+        }, 250);
+    }
+
+    openBtn.addEventListener("click", openModal);
+    closeBtn.addEventListener("click", closeModal);
+    doneBtn?.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", event => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener("keydown", event => {
+        if (
+            event.key === "Escape" &&
+            modal.classList.contains("show")
+        ) {
+            closeModal();
+        }
+    });
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        if (submitButton.disabled) return;
+
+        const rating = Number(ratingInput.value);
+        const accurate = accurateInput.value;
+        const comment = commentInput?.value.trim() || "";
+        const name = nameInput?.value.trim() || "";
+
+        if (rating < 1 || rating > 5) {
+            showError("Please select a star rating.");
+            return;
+        }
+
+        if (!accurate) {
+            showError("Please select Yes or No.");
+            return;
+        }
+
+        if (!comment) {
+            showError("Please enter your feedback.");
+            commentInput?.focus();
+            return;
+        }
+
+        const buttonText = submitButton.querySelector("span");
+        const originalText = buttonText?.textContent || "Submit Feedback";
+
+        submitButton.disabled = true;
+        submitButton.classList.add("is-loading");
+
+        if (buttonText) {
+            buttonText.textContent = "Submitting...";
+        }
+
+        showError();
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/feedback`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    rating: rating,
+                    comment: comment,
+                    name: name || null,
+                    detailsAccurate: accurate === "yes"
+                })
+            });
+
+            if (!response.ok) {
+                const serverMessage = await response.text();
+
+                throw new Error(
+                    serverMessage || `Server error: ${response.status}`
+                );
+            }
+
+            formView.hidden = true;
+            successView.hidden = false;
+
+        } catch (error) {
+            console.error("Feedback submission failed:", error);
+
+            showError(
+                "Unable to submit feedback. Please try again."
+            );
+
+        } finally {
+            submitButton.disabled = false;
+            submitButton.classList.remove("is-loading");
+
+            if (buttonText) {
+                buttonText.textContent = originalText;
+            }
+        }
+    });
+})();
+
+// Past exams
 let isPastExamsOpen = false;
 
 function setPastExamsOpen(open) {
@@ -585,16 +870,9 @@ if (togglePastExams) {
     });
 }
 
-function dateKey(record) {
-    return normalizeDate(record.examDate);
-}
-
-function shiftKey(record) {
-    return getShiftNumber(record.shift) || "9";
-}
-
+// Student search
 if (searchForm) {
-    searchForm.addEventListener("submit", async function (event) {
+    searchForm.addEventListener("submit", async event => {
         event.preventDefault();
 
         if (searchButton.disabled) return;
@@ -656,37 +934,32 @@ if (searchForm) {
             }
 
             updateProgramBadge(currentRecord, records);
-            const todayStr = getTodayString();
+
+            const today = getTodayString();
 
             const upcomingExams = records
-                .filter(r => !dateKey(r) || dateKey(r) >= todayStr)
+                .filter(record => !dateKey(record) || dateKey(record) >= today)
                 .sort((a, b) =>
                     (dateKey(a) || "9999-99-99").localeCompare(
                         dateKey(b) || "9999-99-99"
-                    ) ||
-                    shiftKey(a).localeCompare(shiftKey(b))
+                    ) || shiftKey(a).localeCompare(shiftKey(b))
                 );
 
             const pastExams = records
-                .filter(r => dateKey(r) && dateKey(r) < todayStr)
+                .filter(record => dateKey(record) && dateKey(record) < today)
                 .sort((a, b) =>
                     dateKey(b).localeCompare(dateKey(a)) ||
                     shiftKey(a).localeCompare(shiftKey(b))
                 );
 
-            if (upcomingExamContainer) {
-                upcomingExamContainer.replaceChildren();
-            }
-
-            if (pastExamsContainer) {
-                pastExamsContainer.replaceChildren();
-            }
+            upcomingExamContainer?.replaceChildren();
+            pastExamsContainer?.replaceChildren();
 
             if (upcomingExamContainer) {
                 if (upcomingExams.length > 0) {
-                    upcomingExams.forEach(r => {
+                    upcomingExams.forEach(record => {
                         upcomingExamContainer.appendChild(
-                            createExamCard(r, false)
+                            createExamCard(record, false)
                         );
                     });
                 } else {
@@ -701,9 +974,9 @@ if (searchForm) {
             }
 
             if (pastExamsContainer) {
-                pastExams.forEach(r => {
+                pastExams.forEach(record => {
                     pastExamsContainer.appendChild(
-                        createExamCard(r, true)
+                        createExamCard(record, true)
                     );
                 });
             }
@@ -739,24 +1012,18 @@ if (searchForm) {
     });
 }
 
+
 if (searchAgainBtn) {
-    searchAgainBtn.addEventListener("click", function () {
+    searchAgainBtn.addEventListener("click", () => {
         if (dashboardView) dashboardView.hidden = true;
         if (searchView) searchView.hidden = false;
 
         if (admissionInput) admissionInput.value = "";
 
-        if (upcomingExamContainer) {
-            upcomingExamContainer.replaceChildren();
-        }
+        upcomingExamContainer?.replaceChildren();
+        pastExamsContainer?.replaceChildren();
 
-        if (pastExamsContainer) {
-            pastExamsContainer.replaceChildren();
-        }
-
-        if (togglePastExams) {
-            togglePastExams.hidden = true;
-        }
+        if (togglePastExams) togglePastExams.hidden = true;
 
         if (programBadge) {
             programBadge.replaceChildren();
@@ -771,8 +1038,7 @@ if (searchAgainBtn) {
         showMessage("");
 
         window.scrollTo({ top: 0, behavior: "smooth" });
-
-        if (admissionInput) admissionInput.focus();
+        admissionInput?.focus();
     });
 }
 
@@ -801,222 +1067,6 @@ if (disclaimerDialog) {
         }
     });
 }
-
-
-/* =========================================================
-   FEEDBACK POPUP CONTROLLER (Synchronized with new HTML)
-   ========================================================= */
-(() => {
-    "use strict";
-
-    const modal = document.getElementById("fbModal");
-    const openBtn = document.getElementById("openFeedback");
-    const closeBtn = document.getElementById("fbClose");
-    const form = document.getElementById("fbForm");
-    const formView = document.getElementById("fbFormView");
-    const okView = document.getElementById("fbSuccessView");
-    const doneBtn = document.getElementById("fbDone");
-
-    const ratingInput = document.getElementById("fbRating");
-    const ratingLabel = document.getElementById("fbRatingLabel");
-    const accInput = document.getElementById("fbAccurate");
-    const accHint = document.getElementById("fbAccHint");
-
-    const comment = document.getElementById("fbComment");
-    const userName = document.getElementById("fbName");
-    const errorEl = document.getElementById("fbError");
-
-    if (!modal || !form) return;
-
-    const stars = [...document.querySelectorAll("#fbStars .star-btn")];
-    const accBtns = [...document.querySelectorAll(".acc-btn")];
-    const TEXT = { 1: "Very Poor", 2: "Poor", 3: "Average", 4: "Good", 5: "Excellent" };
-
-    let lastFocus = null;
-    let resetTimer = null;
-
-    const setError = text => {
-        if (errorEl) errorEl.textContent = text;
-    };
-
-    /* ---------- Stars ---------- */
-    function paint(n, cls) {
-        stars.forEach(s => s.classList.toggle(cls, Number(s.dataset.value) <= n));
-    }
-
-    function announce(text) {
-        if (!ratingLabel) return;
-        ratingLabel.textContent = text;
-        ratingLabel.classList.remove("swap");
-        void ratingLabel.offsetWidth;
-        ratingLabel.classList.add("swap");
-    }
-
-    function setRating(n) {
-        if (ratingInput) ratingInput.value = String(n);
-        paint(n, "active");
-        announce(TEXT[n]);
-        setError("");
-
-        stars.forEach((s, i) => {
-            s.classList.remove("pop");
-            if (i < n) {
-                s.style.setProperty("--d", `${i * 70}ms`);
-                void s.offsetWidth;
-                s.classList.add("pop");
-            }
-        });
-    }
-
-    stars.forEach(star => {
-        const value = Number(star.dataset.value);
-        star.addEventListener("click", () => setRating(value));
-        star.addEventListener("mouseenter", () => paint(value, "hover"));
-        star.addEventListener("mouseleave", () => paint(0, "hover"));
-        star.addEventListener("focus", () => paint(value, "hover"));
-        star.addEventListener("blur", () => paint(0, "hover"));
-    });
-
-    /* ---------- "Did you find your details accurate?" ---------- */
-    function setAccurate(value) {
-        if (accInput) accInput.value = value;
-
-        accBtns.forEach(btn => {
-            const on = btn.dataset.value === value;
-            btn.classList.toggle("selected", on);
-            btn.setAttribute("aria-pressed", String(on));
-            if (on) {
-                btn.classList.remove("pop");
-                void btn.offsetWidth;
-                btn.classList.add("pop");
-            }
-        });
-
-        if (accHint) accHint.classList.toggle("show", value === "no");
-        setError("");
-    }
-
-    accBtns.forEach(btn => btn.addEventListener("click", () => setAccurate(btn.dataset.value)));
-
-    /* ---------- Open / Close / Reset ---------- */
-    function resetForm() {
-        form.reset();
-        if (ratingInput) ratingInput.value = "";
-        if (accInput) accInput.value = "";
-        announce("Select rating");
-        paint(0, "active");
-        paint(0, "hover");
-        stars.forEach(s => s.classList.remove("pop"));
-        accBtns.forEach(b => {
-            b.classList.remove("selected", "pop");
-            b.setAttribute("aria-pressed", "false");
-        });
-        if (accHint) accHint.classList.remove("show");
-        setError("");
-    }
-
-    function openModal(event) {
-        if (event) event.preventDefault();
-        clearTimeout(resetTimer);
-
-        if (formView) formView.hidden = false;
-        if (okView) okView.hidden = true;
-        setError("");
-
-        lastFocus = document.activeElement;
-        modal.classList.add("show");
-        modal.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden";
-        setTimeout(() => {
-            if (closeBtn) closeBtn.focus();
-        }, 60);
-    }
-
-    function closeModal() {
-        modal.classList.remove("show");
-        modal.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
-
-        clearTimeout(resetTimer);
-        resetTimer = setTimeout(() => {
-            if (formView) formView.hidden = false;
-            if (okView) okView.hidden = true;
-            resetForm();
-        }, 250);
-
-        if (lastFocus && typeof lastFocus.focus === "function") {
-            lastFocus.focus();
-        }
-    }
-
-    if (openBtn) openBtn.addEventListener("click", openModal);
-    if (closeBtn) closeBtn.addEventListener("click", closeModal);
-    if (doneBtn) doneBtn.addEventListener("click", closeModal);
-
-    modal.addEventListener("click", e => {
-        if (e.target === modal) closeModal();
-    });
-
-    document.addEventListener("keydown", e => {
-        if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
-    });
-
-    /* ---------- Submit Form ---------- */
-    form.addEventListener("submit", async event => {
-        event.preventDefault();
-
-        const btn = form.querySelector(".feedback-submit");
-        if (!btn || btn.disabled) return;
-
-        const rating = Number(ratingInput?.value || 0);
-        const text = comment?.value.trim() || "";
-        const name = userName?.value.trim() || "";
-        const accurateVal = accInput?.value || "";
-
-        if (!(rating >= 1 && rating <= 5)) return setError("Please select a rating.");
-        if (!accurateVal) return setError("Please tell us if your details were accurate.");
-        if (!text) {
-            setError("Please enter your comments.");
-            if (comment) comment.focus();
-            return;
-        }
-
-        const label = btn.querySelector("span");
-        btn.disabled = true;
-        btn.classList.add("is-loading");
-        if (label) label.textContent = "Submitting...";
-        setError("");
-
-        try {
-            const base = typeof API_BASE_URL !== "undefined" ? API_BASE_URL : "/api";
-
-            const response = await fetch(`${base}/feedback`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    rating,
-                    comment: text,
-                    name: name || null,
-                    detailsAccurate: accurateVal === "yes"
-                })
-            });
-
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-            if (formView) formView.hidden = true;
-            if (okView) okView.hidden = false;
-
-        } catch (error) {
-            console.error("Feedback submission failed:", error);
-            setError("Unable to submit feedback. Please try again.");
-
-        } finally {
-            btn.disabled = false;
-            btn.classList.remove("is-loading");
-            if (label) label.textContent = "Submit Feedback";
-        }
-    });
-})();
 
 loadVisitorCount();
 startTracking();
