@@ -1,13 +1,17 @@
+
 const isLocalFrontend =
-    location.hostname === "localhost" ||
-    location.hostname === "127.0.0.1" ||
-    location.protocol === "file:";
+    location.protocol === "file:" ||
+    (
+        ["localhost", "127.0.0.1"].includes(location.hostname) &&
+        location.port !== "8080"
+    );
 
 const API_BASE_URL = isLocalFrontend
     ? "http://localhost:8080/api"
-    : "https://examseat-finder.onrender.com/api";
+    : "/api";
 
 console.log("Seat Finder API:", API_BASE_URL);
+
 const searchView = document.getElementById("searchView");
 const dashboardView = document.getElementById("dashboardView");
 const searchForm = document.getElementById("searchForm");
