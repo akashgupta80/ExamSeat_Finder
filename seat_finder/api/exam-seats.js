@@ -7,7 +7,7 @@ const {
 } = require("../lib/security");
 
 const ADMISSION_NO = /^[A-Za-z0-9/_.-]{3,40}$/;
-const SHOW_FULL_NAME = false;
+const SHOW_FULL_NAME = true;
 
 const EXAM_TIMES = {
     1: "09:30 AM - 11:00 AM",
