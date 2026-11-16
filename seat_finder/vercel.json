@@ -3,7 +3,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "buildCommand": null,
-  "outputDirectory": "public",
+  "outputDirectory": "src/main/resources/static",
   "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
