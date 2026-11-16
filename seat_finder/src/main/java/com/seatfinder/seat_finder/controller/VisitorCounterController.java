@@ -1,8 +1,10 @@
+
 package com.seatfinder.seat_finder.controller;
 
 import com.seatfinder.seat_finder.entity.OnlineStudent;
 import com.seatfinder.seat_finder.entity.VisitorCounter;
 import com.seatfinder.seat_finder.repository.OnlineStudentRepository;
+import com.seatfinder.seat_finder.repository.UniqueVisitorRepository;
 import com.seatfinder.seat_finder.repository.VisitorCounterRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,25 +22,25 @@ import java.util.regex.Pattern;
 public class VisitorCounterController {
 
     private static final Integer COUNTER_ID = 1;
-
     private static final int ONLINE_TIMEOUT_SECONDS = 60;
-
     private static final Pattern SAFE_ID =
-            Pattern.compile("[A-Za-z0-9\\-]{8,64}");
+            Pattern.compile("[A-Za-z0-9-]{8,64}");
 
     private final VisitorCounterRepository visitorCounterRepository;
     private final OnlineStudentRepository onlineStudentRepository;
+    private final UniqueVisitorRepository uniqueVisitorRepository;
 
     public VisitorCounterController(
             VisitorCounterRepository visitorCounterRepository,
-            OnlineStudentRepository onlineStudentRepository) {
+            OnlineStudentRepository onlineStudentRepository,
+            UniqueVisitorRepository uniqueVisitorRepository) {
 
         this.visitorCounterRepository = visitorCounterRepository;
         this.onlineStudentRepository = onlineStudentRepository;
+        this.uniqueVisitorRepository = uniqueVisitorRepository;
     }
 
     @PostConstruct
-    @Transactional
     public void initCounterRow() {
         if (visitorCounterRepository.findById(COUNTER_ID).isEmpty()) {
             VisitorCounter counter = new VisitorCounter();
@@ -50,14 +52,25 @@ public class VisitorCounterController {
 
     @PostMapping("/visit")
     @Transactional
-    public Map<String, Long> recordVisit() {
-        int updated = visitorCounterRepository.increment(COUNTER_ID);
+    public Map<String, Long> recordVisit(
+            @RequestBody Map<String, String> request) {
 
-        if (updated  ==0) {
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Visitor counter row was not found"
-            );
+        String visitorId = validateId(request.get("sessionId"));
+
+        int inserted = uniqueVisitorRepository.insertIfNew(
+                visitorId,
+                LocalDateTime.now()
+        );
+
+        if (inserted == 1) {
+            int updated = visitorCounterRepository.increment(COUNTER_ID);
+
+            if (updated == 0) {
+                throw new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Visitor counter row was not found."
+                );
+            }
         }
 
         return Map.of("totalVisitors", readTotal());
@@ -77,13 +90,12 @@ public class VisitorCounterController {
 
         int updated = onlineStudentRepository.touch(sessionId, now);
 
-        if (updated  ==0) {
+        if (updated == 0) {
             try {
                 onlineStudentRepository.save(
                         new OnlineStudent(sessionId, now)
                 );
             } catch (DataIntegrityViolationException exception) {
-
                 onlineStudentRepository.touch(sessionId, now);
             }
         }
@@ -120,10 +132,10 @@ public class VisitorCounterController {
     }
 
     private String validateId(String id) {
-        if (id  ==null || !SAFE_ID.matcher(id).matches()) {
+        if (id == null || !SAFE_ID.matcher(id).matches()) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Invalid visitor or session ID"
+                    "Invalid visitor or session ID."
             );
         }
 

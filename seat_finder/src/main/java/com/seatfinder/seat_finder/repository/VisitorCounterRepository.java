@@ -11,6 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 public interface VisitorCounterRepository
         extends JpaRepository<VisitorCounter, Integer> {
 
+    @Modifying
+    @Transactional
+    @Query(value = """
+            INSERT IGNORE INTO visitor_counter (id, total_visitors)
+            VALUES (:id, :total)
+            """, nativeQuery = true)
+    int initializeIfMissing(
+            @Param("id") Integer id,
+            @Param("total") Long total
+    );
+
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
     @Query("""

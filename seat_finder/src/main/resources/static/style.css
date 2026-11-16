@@ -648,4 +648,13 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 
 .inset-input-box { background: var(--panel); border: 1px solid var(--line); box-shadow: var(--panel-inset); }
 .inset-input-box:focus-within { background: #fff; border-color: rgba(var(--primary-rgb), .7); box-shadow: 0 0 0 4px rgba(var(--primary-rgb), .15), 0 0 22px rgba(var(--cyan-rgb), .2); }
+
 .inset-input-box ::placeholder { color: var(--soft); }
+
+.honeypot {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}

@@ -11,24 +11,20 @@ const API_BASE_URL = isLocalFrontend
     : "/api";
 
 console.log("Seat Finder API:", API_BASE_URL);
-
 const searchView = document.getElementById("searchView");
 const dashboardView = document.getElementById("dashboardView");
 const searchForm = document.getElementById("searchForm");
 const admissionInput = document.getElementById("admissionNo");
 const searchButton = document.getElementById("searchButton");
 const message = document.getElementById("message");
-
 const visitorCount = document.getElementById("visitorCount");
 const onlineCount = document.getElementById("onlineCount");
 const onlineLabel = document.getElementById("onlineLabel");
 const searchAgainBtn = document.getElementById("searchAgainBtn");
-
 const studentNameDisplay = document.getElementById("studentNameDisplay");
 const admissionDisplay = document.getElementById("admissionDisplay");
 const programBadge = document.getElementById("programBadge");
 const studentAvatar = document.getElementById("studentAvatar");
-
 const upcomingExamContainer = document.getElementById("upcomingExamContainer");
 const pastExamsContainer = document.getElementById("pastExamsContainer");
 const togglePastExams = document.getElementById("togglePastExams");
@@ -381,26 +377,26 @@ function syncDashboardUi() {
 const HEARTBEAT_MS = 15000;
 let memoryVisitorId = null;
 
+
 function generateId() {
-    if (window.crypto && typeof crypto.randomUUID === "function") {
-        return crypto.randomUUID();
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+        return window.crypto.randomUUID();
+    }
+
+    if (!window.crypto || !window.crypto.getRandomValues) {
+        throw new Error("Secure random generation is unavailable.");
     }
 
     const bytes = new Uint8Array(16);
-
-    if (window.crypto && crypto.getRandomValues) {
-        crypto.getRandomValues(bytes);
-    } else {
-        for (let i = 0; i < bytes.length; i++) {
-            bytes[i] = Math.floor(Math.random() * 256);
-        }
-    }
+    window.crypto.getRandomValues(bytes);
 
     return Array.from(
         bytes,
         byte => byte.toString(16).padStart(2, "0")
     ).join("");
 }
+
+
 
 function getVisitorId() {
     const KEY = "seatFinderVisitorId";
@@ -481,23 +477,20 @@ async function loadVisitorCount() {
     }
 }
 
+
 async function registerVisit() {
     try {
-        const response = await fetch(`${API_BASE_URL}/visitors/visit`, {
-            method: "POST"
+        const data = await postJson("/visitors/visit", {
+            sessionId: VISITOR_ID
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
         showVisitorTotal(data.totalVisitors);
     } catch (error) {
         console.warn("Visit registration failed:", error.message);
         await loadVisitorCount();
     }
 }
+
 
 async function sendHeartbeat() {
     if (document.hidden) return;
@@ -781,6 +774,7 @@ function startTracking() {
         const accurate = accurateInput.value;
         const comment = commentInput?.value.trim() || "";
         const name = nameInput?.value.trim() || "";
+        const website = document.getElementById("fbWebsite")?.value.trim() || "";
 
         if (rating < 1 || rating > 5) {
             showError("Please select a star rating.");
@@ -820,6 +814,7 @@ function startTracking() {
                     rating: rating,
                     comment: comment,
                     name: name || null,
+                    website: website,
                     detailsAccurate: accurate === "yes"
                 })
             });
@@ -1057,13 +1052,11 @@ if (closeDisclaimer && disclaimerDialog) {
         disclaimerDialog.close();
     });
 }
-
 if (okDisclaimer && disclaimerDialog) {
     okDisclaimer.addEventListener("click", () => {
         disclaimerDialog.close();
     });
 }
-
 if (disclaimerDialog) {
     disclaimerDialog.addEventListener("click", event => {
         if (event.target === disclaimerDialog) {
@@ -1071,6 +1064,5 @@ if (disclaimerDialog) {
         }
     });
 }
-
 loadVisitorCount();
 startTracking();

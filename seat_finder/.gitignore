@@ -1,3 +1,4 @@
+
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -32,7 +33,35 @@ build/
 ### VS Code ###
 .vscode/
 
-
-# Node.js
+### Node.js ###
 node_modules/
 npm-debug.log*
+
+### Secrets and environment files ###
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+application-local.properties
+
+### Vercel ###
+.vercel
+
+### Database backups and local test files ###
+backup*.sql
+dump*.sql
+*.sql.gz
+*.dump
+body.json
+good.json
+
+### Operating system files ###
+.DS_Store
+Thumbs.db
+
+### Logs ###
+*.log
+
+### Local IDE and test files ###
+coverage/

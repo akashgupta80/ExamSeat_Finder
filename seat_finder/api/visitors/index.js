@@ -1,12 +1,14 @@
 
 const pool = require("../../lib/db");
+const {
+    allowMethods,
+    sendServerError
+} = require("../../lib/security");
 
 module.exports = async (req, res) => {
-    if (req.method !== "GET") {
-        return res.status(405).json({
-            message: "Method not allowed"
-        });
-    }
+    res.setHeader("Cache-Control", "no-store");
+
+    if (!allowMethods(req, res, ["GET"])) return;
 
     try {
         const [rows] = await pool.execute(
@@ -18,14 +20,9 @@ module.exports = async (req, res) => {
             : 0;
 
         return res.status(200).json({
-            totalVisitors: totalVisitors
+            totalVisitors
         });
-
     } catch (error) {
-        console.error("Visitor counter error:", error);
-
-        return res.status(500).json({
-            message: "Unable to fetch visitor count."
-        });
+        return sendServerError(res, error);
     }
 };

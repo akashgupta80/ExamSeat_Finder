@@ -1,3 +1,4 @@
+
 package com.seatfinder.seat_finder.controller;
 
 import com.seatfinder.seat_finder.dto.ExamSeatResponse;
@@ -19,11 +20,14 @@ import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/exam-seats")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5500")
 public class ExamSeatController {
 
-    private static final int MAX_ADMISSION_LENGTH = 50;
-    private static final Pattern DIGITS = Pattern.compile("\\d+");
+    private static final Pattern ADMISSION_NO =
+            Pattern.compile("^[A-Za-z0-9/_.-]{3,40}$");
+
+    private static final Pattern DIGITS =
+            Pattern.compile("\\d+");
 
     private final ExamSeatRepository examSeatRepository;
 
@@ -32,12 +36,14 @@ public class ExamSeatController {
     }
 
     @GetMapping
-    public List<ExamSeatResponse> searchByQuery(@RequestParam String admissionNo) {
+    public List<ExamSeatResponse> searchByQuery(
+            @RequestParam String admissionNo) {
         return search(admissionNo);
     }
 
     @GetMapping("/{admissionNo}")
-    public List<ExamSeatResponse> searchByPath(@PathVariable String admissionNo) {
+    public List<ExamSeatResponse> searchByPath(
+            @PathVariable String admissionNo) {
         return search(admissionNo);
     }
 
@@ -52,12 +58,13 @@ public class ExamSeatController {
 
         String cleaned = admissionNo.trim();
 
-        if (cleaned.length() > MAX_ADMISSION_LENGTH) {
+        if (!ADMISSION_NO.matcher(cleaned).matches()) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Admission number is too long."
+                    "Please enter a valid admission number."
             );
         }
+
         List<ExamSeat> seats =
                 examSeatRepository.findByAdmissionNoOrderByExamDateAscShiftAsc(cleaned);
 

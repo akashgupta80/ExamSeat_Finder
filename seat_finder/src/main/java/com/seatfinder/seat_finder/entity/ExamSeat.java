@@ -12,37 +12,37 @@ public class ExamSeat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "admission_no", nullable = false)
+    @Column(name = "admission_no", nullable = false, length = 40)
     private String admissionNo;
 
-    @Column(name = "enrollment_no")
+    @Column(name = "enrollment_no", length = 50)
     private String enrollmentNo;
 
-    @Column(name = "student_name", nullable = false)
+    @Column(name = "student_name", nullable = false, length = 150)
     private String studentName;
 
-    @Column(name = "program")
+    @Column(length = 100)
     private String program;
 
-    @Column(name = "semester")
+    @Column(length = 30)
     private String semester;
 
-    @Column(name = "section")
+    @Column(length = 50)
     private String section;
 
-    @Column(name = "course_code", nullable = false)
+    @Column(name = "course_code", nullable = false, length = 50)
     private String courseCode;
 
-    @Column(name = "room_no", nullable = false)
+    @Column(name = "room_no", nullable = false, length = 50)
     private String roomNo;
 
-    @Column(name = "seat_no", nullable = false)
+    @Column(name = "seat_no", nullable = false, length = 30)
     private String seatNo;
 
     @Column(name = "exam_date", nullable = false)
     private LocalDate examDate;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private String shift;
 
     public ExamSeat() {
@@ -140,4 +140,3 @@ public class ExamSeat {
         this.shift = shift;
     }
 }
-

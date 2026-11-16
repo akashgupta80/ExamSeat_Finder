@@ -1,8 +1,11 @@
-
 {
   "name": "exam-seat-finder",
   "version": "1.0.0",
+  "description": "Exam seat lookup for students, running on Vercel with a MySQL database",
   "private": true,
+  "engines": {
+    "node": "24.x"
+  },
   "dependencies": {
     "mysql2": "^3.14.0"
   }
