@@ -1064,5 +1064,26 @@ if (disclaimerDialog) {
         }
     });
 }
+    (() => {
+        const dialog = document.getElementById("termsDialog");
+        const openBtn = document.getElementById("termsButton");
+        const closeBtn = document.getElementById("closeTerms");
+        const okBtn = document.getElementById("okTerms");
+        const scrollBox = dialog?.querySelector(".terms-scroll");
+
+        if (!dialog || !openBtn) return;
+
+        openBtn.addEventListener("click", () => {
+            dialog.showModal();
+            if (scrollBox) scrollBox.scrollTop = 0;
+        });
+
+        closeBtn?.addEventListener("click", () => dialog.close());
+        okBtn?.addEventListener("click", () => dialog.close());
+
+        dialog.addEventListener("click", event => {
+            if (event.target === dialog) dialog.close();
+        });
+    })();
 loadVisitorCount();
 startTracking();

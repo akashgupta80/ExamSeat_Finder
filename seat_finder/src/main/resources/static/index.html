@@ -7,13 +7,13 @@
     <meta name="description" content="Find your examination room, seat number, shift and timing using your admission number.">
     <meta name="google-site-verification" content="d3501pw_KVLK6FniyHVMGUMAR9tO6FngIa9HQ_ufk_I" />
     <title>Exam Seat Finder</title>
-    <link rel="stylesheet" href="style.css?v=12">
+    <link rel="stylesheet" href="style.css?v=13">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    <script src="script.js?v=8" defer></script>
+    <script src="script.js?v=9" defer></script>
 </head>
 <body>
 
@@ -52,16 +52,6 @@
             </div>
 
             <form id="fbForm" novalidate>
-                <div class="honeypot" aria-hidden="true">
-                    <label for="fbWebsite">Website</label>
-                    <input
-                            type="text"
-                            id="fbWebsite"
-                            name="website"
-                            tabindex="-1"
-                            autocomplete="off"
-                    >
-                </div>
                 <div class="form-section">
                     <div class="section-label-bar">
                         <span class="field-label" id="fbRatingTitle">
@@ -251,9 +241,9 @@
             <div class="dev-card">
                 <span class="dev-avatar">AK</span>
                 <span class="dev-name">Akash Kumar</span>
-                <a href="https://www.linkedin.com/in/akashkumar80" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">
-                    <i class="fa-brands fa-linkedin"></i>
-                </a>
+<!--                <a href="https://www.linkedin.com/in/akashkumar80" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">-->
+<!--                    <i class="fa-brands fa-linkedin"></i>-->
+<!--                </a>-->
             </div>
         </div>
 
@@ -268,27 +258,214 @@
     <p class="copyright">
         © 2026 Exam Seat Finder • Built for Students 🚀 &bull;
         <button type="button" id="disclaimerButton" class="text-btn">Disclaimer</button> &bull;
+        <button type="button" id="termsButton" class="text-btn">Terms &amp; Conditions</button> &bull;
         <a href="mailto:seatfinder.contact@gmail.com">Contact Us</a>
     </p>
 </footer>
 
 <dialog id="disclaimerDialog" class="disclaimer-dialog">
-    <div class="dialog-content">
+    <div class="dialog-content disclaimer-content">
         <button type="button" id="closeDisclaimer" class="close-dialog" aria-label="Close disclaimer">
             <i class="fa-solid fa-xmark"></i>
         </button>
 
-        <h2>
-            <i class="fa-solid fa-shield-halved"></i>
-            Disclaimer
-        </h2>
+        <div class="disc-modal-header">
+            <div class="disc-header-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+                <h2>Important Disclaimer</h2>
+                <span class="disc-subtitle-badge">
+                    <i class="fa-solid fa-circle-info"></i> Student Verification Notice
+                </span>
+            </div>
+        </div>
 
-        <p>
-            Students are advised to carefully verify their examination details, including exam date, shift, course code, room number, and seat number, before appearing for the examination. Please ensure that all information is accurate and up to date by referring to the latest official notification issued by Galgotias University.
-            In case of any discrepancy or mismatch, the details mentioned in the official university notification shall be considered final. The Seat Finder website is intended only to help students access their examination details conveniently and should not be treated as a replacement for official university notifications.
-        </p>
+        <div class="disc-body-well">
+            <div class="disc-card-item">
+                <h3>
+                    <span class="d-icon"><i class="fa-solid fa-clipboard-check"></i></span>
+                    Verify Before Your Exam
+                </h3>
+                <p>
+                    Carefully verify all examination details—including <strong>exam date, shift, course code, room number, and seat number</strong>—before appearing for your examination.
+                </p>
+            </div>
 
-        <button type="button" id="okDisclaimer" class="btn-primary">Understood</button>
+            <div class="disc-card-item disc-highlight-card">
+                <h3>
+                    <span class="d-icon d-icon-warn"><i class="fa-solid fa-building-columns"></i></span>
+                    Official University Notification Prevails
+                </h3>
+                <p>
+                    Always refer to the latest official notification issued by <strong>Galgotias University</strong>. In case of any discrepancy or mismatch, the details in the official university notification shall be considered final.
+                </p>
+            </div>
+
+            <div class="disc-card-item">
+                <h3>
+                    <span class="d-icon"><i class="fa-solid fa-laptop-code"></i></span>
+                    Convenience Portal Only
+                </h3>
+                <p>
+                    Exam Seat Finder is an independent student utility designed to help you look up seating details quickly and should not be treated as a replacement for official university circulars.
+                </p>
+            </div>
+        </div>
+
+        <div class="disc-action-bar">
+            <button type="button" id="okDisclaimer" class="disc-btn-home">
+                <i class="fa-solid fa-house"></i>
+                <span>Back to Home</span>
+            </button>
+            <button
+                    type="button"
+                    class="disc-btn-feedback"
+                    onclick="document.getElementById('disclaimerDialog')?.close(); document.getElementById('openFeedback')?.click();"
+            >
+                <i class="fa-regular fa-comment-dots"></i>
+                <span>Feedback</span>
+            </button>
+        </div>
+    </div>
+</dialog>
+
+<dialog id="termsDialog" class="disclaimer-dialog terms-dialog">
+    <div class="dialog-content terms-content">
+        <button type="button" id="closeTerms" class="close-dialog" aria-label="Close terms and conditions">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="terms-modal-header">
+            <div class="terms-header-icon">
+                <i class="fa-solid fa-file-contract"></i>
+            </div>
+            <div>
+                <h2>Terms &amp; Conditions</h2>
+                <span class="terms-updated-badge">
+                    <i class="fa-regular fa-clock"></i> Last updated: 16 November 2026
+                </span>
+            </div>
+        </div>
+
+        <div class="terms-scroll">
+            <p class="terms-intro">
+                By accessing or using <strong>Exam Seat Finder</strong>, you agree to the following Terms and Conditions. Please read them carefully before using the service.
+            </p>
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-bullseye"></i></span> 1. Project Purpose</h3>
+                <p>Exam Seat Finder is an independently developed educational project created to learn and demonstrate Java, Spring Boot, database integration, REST APIs, frontend development, and web deployment. It lets you search examination-seat information using an admission number, based on the records available in its connected database.</p>
+            </div>
+
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-building-columns"></i></span> 2. Independent Project Disclaimer</h3>
+                <p>This is a personal learning project. It is not an official university website, portal, or service, and it is not operated, maintained, approved, or endorsed by Galgotias University or any other educational institution. Institutional names are mentioned only to describe the context of this project and belong to their respective owners.</p>
+            </div>
+
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-triangle-exclamation"></i></span> 3. Accuracy of Information</h3>
+                <p>The information shown depends on the records in the database and may be incomplete, outdated, delayed, or incorrect.</p>
+                <ul>
+                    <li>Always verify details using the latest official university notification.</li>
+                    <li>Do not rely only on this website for examination decisions.</li>
+                    <li>If there is any difference, the official notification takes priority.</li>
+                    <li>The developer does not guarantee the accuracy or availability of the records.</li>
+                </ul>
+            </div>
+
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-shield-halved"></i></span> 4. Acceptable Use</h3>
+                <p>You agree not to:</p>
+                <ul>
+                    <li>Use the website for unlawful or fraudulent activities.</li>
+                    <li>Attempt unauthorized access to the website, database, or server.</li>
+                    <li>Send automated requests or excessive traffic that disrupts the service.</li>
+                    <li>Extract, modify, damage, or misuse stored information.</li>
+                    <li>Use another person's information for harassment or any unauthorized purpose.</li>
+                    <li>Bypass security controls or rate limits.</li>
+                </ul>
+            </div>
+
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-user-graduate"></i></span> 5. Student Information</h3>
+                <p>The search accepts an admission number and shows matching records, which may include the student's name, admission number, room, seat, course code, exam date, shift, program, semester, and section. The search is not an authentication system, and an admission number alone does not prove that someone is authorized to view the information. Please do not search for or misuse another person's information.</p>
+            </div>
+
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-comment-dots"></i></span> 6. Feedback</h3>
+                <p>If you submit feedback, your rating, comment, optional name, and accuracy response may be stored in the project's database. Please do not include passwords, financial details, government ID numbers, or other sensitive information in feedback.</p>
+            </div>
+
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-cookie-bite"></i></span> 7. Cookies and Browser Storage</h3>
+                <p>The website stores a generated visitor identifier in your browser to count returning visitors, and sends a generated session identifier to support the approximate online counter. Clearing browser storage may create a new identifier, so visitor counts are approximate.</p>
+            </div>
+
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-server"></i></span> 8. Availability and Changes</h3>
+                <p>The website may be modified, interrupted, suspended, or discontinued at any time. Features, records, and availability may change without prior notice.</p>
+            </div>
+
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-cloud"></i></span> 9. Third-Party Services</h3>
+                <p>The project may rely on third-party hosting, database, or infrastructure providers. Their services are subject to their own terms and privacy policies, and the developer does not control them.</p>
+            </div>
+
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-scale-balanced"></i></span> 10. Limitation of Liability</h3>
+                <p>To the extent permitted by law, the website is provided "as is" and "as available". The developer does not guarantee that it will always be accurate, secure, uninterrupted, or error-free, and is not responsible for decisions made solely on the basis of the information shown. Please verify important information through official sources.</p>
+            </div>
+
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-copyright"></i></span> 11. Intellectual Property</h3>
+                <p>The original source code, design, and implementation are part of an independent learning project. Third-party names, logos, and trademarks remain the property of their owners. You may not copy or redistribute project materials in a way that violates the law or the rights of others.</p>
+            </div>
+
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-arrows-rotate"></i></span> 12. Changes to These Terms</h3>
+                <p>These terms may be updated when the project or its features change. The updated version will be published here with a revised date.</p>
+            </div>
+
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-envelope-open-text"></i></span> 13. Contact</h3>
+                <p>For questions, corrections, or suggestions, use the Feedback option or reach out directly via email:</p>
+
+                <!-- Highlighted Email Box with Copy Toggle -->
+                <div class="terms-email-box">
+                    <a href="mailto:seatfinder.contact@gmail.com" class="terms-email-link">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span>seatfinder.contact@gmail.com</span>
+                    </a>
+                    <button
+                            type="button"
+                            class="terms-copy-btn"
+                            aria-pressed="false"
+                            onclick="navigator.clipboard?.writeText('seatfinder.contact@gmail.com'); this.classList.toggle('copied'); this.setAttribute('aria-pressed', this.classList.contains('copied')); this.innerHTML = this.classList.contains('copied') ? '<i class=\'fa-solid fa-check\'></i> Copied' : '<i class=\'fa-regular fa-copy\'></i> Copy';"
+                    >
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+
+            <div class="terms-card-item">
+                <h3><span class="t-icon"><i class="fa-solid fa-circle-check"></i></span> 14. Acceptance</h3>
+                <p>By using Exam Seat Finder, you confirm that you have read and understood these terms. If you do not agree, please stop using the website.</p>
+            </div>
+        </div>
+        <div class="terms-action-bar">
+            <button type="button" id="okTerms" class="terms-btn-home">
+                <i class="fa-solid fa-house"></i>
+                <span>Back to Home</span>
+            </button>
+            <button
+                    type="button"
+                    class="terms-btn-feedback"
+                    onclick="document.getElementById('termsDialog')?.close(); document.getElementById('openFeedback')?.click();"
+            >
+                <i class="fa-regular fa-comment-dots"></i>
+                <span>Feedback</span>
+            </button>
+        </div>
     </div>
 </dialog>
 
