@@ -1,63 +1,105 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0c1124">
     <meta name="robots" content="noindex, nofollow">
-    <title>Page Not Found | Exam Seat Finder</title>
+    <title>404 - Page Not Found | Exam Seat Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 24px;
-            background: #f5f7fb;
-            color: #172033;
-            font-family: Arial, sans-serif;
+            background-color: #0c1124;
+            background-image:
+                radial-gradient(850px 550px at 8% 4%, rgba(99, 102, 241, 0.16), transparent 65%),
+                radial-gradient(750px 550px at 92% 96%, rgba(34, 211, 238, 0.10), transparent 65%);
+            color: #eef2ff;
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
             text-align: center;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            max-width: 520px;
+            width: 100%;
+            max-width: 480px;
+            padding: 42px 30px;
+            border-radius: 30px;
+            background: linear-gradient(145deg, #131b38, #0e142b);
+            box-shadow:
+                12px 12px 26px #060914,
+                -8px -8px 20px rgba(32, 45, 92, 0.48),
+                inset 1px 1px 1px rgba(180, 198, 255, 0.11),
+                inset -1px -1px 1px rgba(0, 0, 0, 0.45);
         }
 
         .code {
-            margin: 0;
-            color: #2563eb;
-            font-size: 100px;
-            font-weight: 800;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(76px, 18vw, 104px);
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, #ffffff 0%, #8c9aff 50%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 6px 24px rgba(99, 102, 241, 0.35));
         }
 
         h1 {
-            margin: 10px 0;
-            font-size: 30px;
+            margin: 14px 0 10px;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
 
         p {
-            color: #64748b;
-            line-height: 1.7;
+            color: #98a4c9;
+            font-size: 14.5px;
+            line-height: 1.65;
         }
 
-        a {
-            display: inline-block;
-            margin-top: 18px;
-            padding: 13px 24px;
-            border-radius: 8px;
-            background: #2563eb;
-            color: white;
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 26px;
+            padding: 14px 28px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #6366f1 0%, #3b9cf2 55%, #22d3ee 100%);
+            color: #ffffff;
             text-decoration: none;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
+            box-shadow:
+                6px 8px 20px #050814,
+                -4px -4px 14px rgba(45, 65, 130, 0.35),
+                0 10px 26px rgba(99, 102, 241, 0.45),
+                inset 0 1px 1px rgba(255, 255, 255, 0.35);
+            transition: transform 0.25s ease, box-shadow 0.3s ease;
         }
 
-        a:hover {
-            background: #1d4ed8;
+        .btn-home:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-home:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
@@ -69,7 +111,10 @@
         Sorry, the page you are looking for does not exist,
         may have been moved, or is temporarily unavailable.
     </p>
-    <a href="/">Back to Home</a>
+    <a href="https://guexamseatfinder.vercel.app/" class="btn-home">
+        <i class="fa-solid fa-house"></i>
+        <span>Back to Home</span>
+    </a>
 </main>
 </body>
 </html>
