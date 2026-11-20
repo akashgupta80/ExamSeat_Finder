@@ -1232,4 +1232,24 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
+.status-indicators {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
 
+@media (max-width: 480px) {
+  .status-indicators {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .badge-chip {
+    padding: 8px 12px;
+    gap: 6px;
+    font-size: 11.5px;
+    white-space: nowrap;
+  }
+}
