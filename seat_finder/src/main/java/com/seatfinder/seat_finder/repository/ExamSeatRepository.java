@@ -1,3 +1,4 @@
+
 package com.seatfinder.seat_finder.repository;
 
 import com.seatfinder.seat_finder.entity.ExamSeat;
@@ -8,7 +9,7 @@ import java.util.List;
 public interface ExamSeatRepository
         extends JpaRepository<ExamSeat, Long> {
 
-    List<ExamSeat> findByAdmissionNoIgnoreCaseOrderByExamDateAscShiftAsc(
+    List<ExamSeat> findByAdmissionNoOrderByExamDateAscShiftAsc(
             String admissionNo
     );
 }
