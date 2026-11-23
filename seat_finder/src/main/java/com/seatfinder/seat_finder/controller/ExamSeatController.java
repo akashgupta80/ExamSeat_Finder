@@ -66,7 +66,8 @@ public class ExamSeatController {
         }
 
         List<ExamSeat> seats =
-                examSeatRepository.findByAdmissionNoIgnoreCaseOrderByExamDateAscShiftAsc(cleaned);
+                examSeatRepository.findByAdmissionNoOrderByExamDateAscShiftAsc(cleaned);
+
         if (seats.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
