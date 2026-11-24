@@ -153,10 +153,12 @@ async function rateLimit(req, res, bucket, limit, windowSeconds) {
 
         return true;
     } catch (error) {
-        console.error(
-            "Rate limit check failed:",
-            error.code || error.message
-        );
+        console.error("Rate limit check failed:", {
+            code: error.code,
+            errno: error.errno,
+            sqlState: error.sqlState,
+            message: error.message
+        });
 
         res.status(503).json({
             error: "Service temporarily unavailable. Please try again."
@@ -167,7 +169,12 @@ async function rateLimit(req, res, bucket, limit, windowSeconds) {
 }
 
 function sendServerError(res, error) {
-    console.error(error && (error.code || error.message));
+    console.error("Database/API error:", {
+        code: error && error.code,
+        errno: error && error.errno,
+        sqlState: error && error.sqlState,
+        message: error && error.message
+    });
 
     return res.status(500).json({
         error: "Something went wrong. Please try again."
