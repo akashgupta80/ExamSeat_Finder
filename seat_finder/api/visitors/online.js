@@ -1,12 +1,11 @@
-const pool = require("../lib/db");
+const pool = require("../../lib/db");
 
 const {
     allowMethods,
     bodyTooLarge,
     getBody,
     sendServerError
-} = require("../lib/security");
-
+} = require("../../lib/security");
 module.exports = async (req, res) => {
     res.setHeader("Cache-Control", "no-store");
 
