@@ -62,16 +62,18 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const [rows] = await pool.execute(
-            `SELECT student_name, admission_no, room_no, seat_no, course_code,
-                    DATE_FORMAT(exam_date, '%Y-%m-%d') AS exam_date_text,
-                    shift, program, semester, section
-             FROM exam_seats
-             WHERE admission_no = ?
-             ORDER BY exam_date ASC, shift ASC
-             LIMIT 20`,
-            [admissionNo]
-        );
+
+const [rows] = await pool.execute(
+    `SELECT student_name, admission_no, room_no, seat_no, course_code,
+            DATE_FORMAT(exam_date, '%Y-%m-%d') AS exam_date_text,
+            shift, program, semester, section
+     FROM exam_seats
+     WHERE LOWER(admission_no) = LOWER(?)
+     ORDER BY exam_date ASC, shift ASC
+     LIMIT 20`,
+    [admissionNo]
+);
+
 
         if (rows.length === 0) {
             return res.status(404).json({

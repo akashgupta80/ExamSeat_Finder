@@ -66,7 +66,8 @@ public class ExamSeatController {
         }
 
         List<ExamSeat> seats =
-                examSeatRepository.findByAdmissionNoOrderByExamDateAscShiftAsc(cleaned);
+                examSeatRepository.findByAdmissionNoIgnoreCaseOrderByExamDateAscShiftAsc(cleaned);
+
 
         if (seats.isEmpty()) {
             throw new ResponseStatusException(

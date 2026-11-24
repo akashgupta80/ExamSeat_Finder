@@ -1,7 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap");
-
 :root {
-  /* Dark Navy Outer Shell */
   --bg: #0c1124;
   --surface: #111832;
   --surface-2: #151e3d;
@@ -9,8 +7,6 @@
   --muted: #98a4c9;
   --soft: #667399;
   --line: rgba(145, 165, 255, 0.12);
-
-  /* Accents */
   --primary: #6366f1;
   --primary-rgb: 99, 102, 241;
   --cyan: #22d3ee;
@@ -20,37 +16,29 @@
   --success: #10b981;
   --danger: #f87171;
   --star: #fbbf24;
-
   --grad: linear-gradient(135deg, #6366f1 0%, #3b9cf2 55%, #22d3ee 100%);
   --title-grad: linear-gradient(135deg, #ffffff 0%, #8c9aff 50%, #22d3ee 100%);
   --overlay: rgba(5, 8, 20, 0.78);
-
-  /* Dark Neumorphic Shadows (Outer Shell) */
   --neu-rim: inset 1px 1px 1px rgba(180, 198, 255, 0.11), inset -1px -1px 1px rgba(0, 0, 0, 0.45);
   --neu-raised: 12px 12px 26px #060914, -8px -8px 20px rgba(32, 45, 92, 0.48), var(--neu-rim);
   --neu-raised-sm: 7px 7px 16px #060914, -5px -5px 13px rgba(32, 45, 92, 0.45), var(--neu-rim);
   --neu-raised-xs: 4px 4px 10px #060914, -3px -3px 8px rgba(32, 45, 92, 0.42), var(--neu-rim);
   --neu-inset: inset 6px 6px 14px #050812, inset -4px -4px 11px rgba(34, 48, 98, 0.42);
   --neu-inset-sm: inset 4px 4px 9px #050812, inset -3px -3px 7px rgba(34, 48, 98, 0.38);
-
   --neu-hover: 16px 18px 36px #04060e, -10px -10px 26px rgba(42, 60, 122, 0.55),
                inset 1px 1px 2px rgba(var(--cyan-rgb), 0.32),
                0 0 28px -6px rgba(var(--primary-rgb), 0.45);
   --neu-hover-sm: 9px 11px 22px #050711, -6px -6px 16px rgba(42, 60, 122, 0.5),
                   inset 1px 1px 1.5px rgba(var(--cyan-rgb), 0.3),
                   0 0 18px -4px rgba(var(--cyan-rgb), 0.25);
-
   --glow: 0 10px 26px rgba(var(--primary-rgb), 0.45), 0 0 20px rgba(var(--cyan-rgb), 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.35);
-
   --font-head: "Space Grotesk", "Inter", system-ui, sans-serif;
   --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 [hidden] { display: none !important; }
 html { scroll-behavior: smooth; color-scheme: dark; }
-
 body {
   min-height: 100vh;
   display: flex;
@@ -66,12 +54,9 @@ body {
     radial-gradient(750px 550px at 92% 96%, rgba(var(--cyan-rgb), 0.10), transparent 65%);
   -webkit-font-smoothing: antialiased;
 }
-
 :focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 button { font: inherit; color: inherit; }
 h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-spacing: -0.02em; }
-
-/* ---------- HEADER ---------- */
 .header {
   width: 100%; max-width: 1120px;
   margin: 0 auto; padding: 20px 20px;
@@ -88,7 +73,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 }
 .brand:hover .logo { transform: translateY(-2px); box-shadow: var(--neu-hover-sm), 0 0 18px rgba(var(--cyan-rgb), 0.3); }
 .brand-name { font-size: clamp(16px, 4vw, 19px); font-weight: 700; }
-
 .feedback-link {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 18px; border-radius: 15px;
@@ -99,8 +83,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 }
 .feedback-link i { color: var(--cyan); }
 .feedback-link:active { transform: translateY(1px); box-shadow: var(--neu-inset-sm); }
-
-/* ---------- MAIN / HERO ---------- */
 .main-container {
   flex: 1; width: 100%; max-width: 760px;
   margin: 0 auto; padding: 10px 16px 40px;
@@ -128,7 +110,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 }
 .badge-chip i { color: var(--cyan); }
 .badge-chip strong { color: var(--text); font-weight: 700; }
-
 .online-pulse {
   position: relative; flex-shrink: 0;
   width: 8px; height: 8px; border-radius: 50%;
@@ -139,8 +120,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   background: var(--success); animation: ring 1.8s ease-out infinite;
 }
 @keyframes ring { from { transform: scale(1); opacity: 0.6; } to { transform: scale(3.2); opacity: 0; } }
-
-/* ---------- DARK SEARCH CARD ---------- */
 .seat-search-card {
   position: relative; width: 100%;
   padding: 34px 30px; border-radius: 30px;
@@ -166,7 +145,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   border-color: rgba(var(--cyan-rgb), 0.55);
   box-shadow: var(--neu-inset), 0 0 0 3px rgba(var(--cyan-rgb), 0.14), 0 0 24px rgba(var(--cyan-rgb), 0.22);
 }
-
 .btn-primary {
   position: relative; overflow: hidden;
   display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -184,7 +162,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 }
 .btn-primary:active { transform: scale(0.98) translateY(1px); }
 .btn-primary:disabled { opacity: 0.7; cursor: wait; }
-
 .btn-secondary {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 11px 20px; border: none; border-radius: 15px;
@@ -195,14 +172,11 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 }
 .btn-secondary i { color: var(--cyan); }
 .btn-secondary:active { transform: translateY(1px); box-shadow: var(--neu-inset-sm); }
-
 .message { margin-top: 16px; font-size: 13.5px; font-weight: 500; text-align: center; word-break: break-word; }
 .message:empty { display: none; }
 .message.success { color: var(--success); }
 .message.error { color: var(--danger); }
 .message.info { color: var(--cyan); }
-
-/* ---------- DASHBOARD ---------- */
 .dashboard-nav { width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
 .program-badge { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 .regular-program-details, .back-program-details, .debarred-program-details {
@@ -213,7 +187,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   background: var(--bg); box-shadow: var(--neu-inset-sm);
 }
 .debarred-program-details { color: var(--danger); }
-
 .student-profile-card {
   width: 100%; display: flex; align-items: center; gap: 16px;
   padding: 22px 24px; margin-bottom: 30px; border-radius: 26px;
@@ -238,7 +211,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   color: var(--room); background: var(--bg);
   box-shadow: var(--neu-inset-sm);
 }
-
 .exams-container-section, .past-exams-wrapper { width: 100%; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 4px 18px; }
 .section-title { display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-head); font-size: 17px; font-weight: 600; }
@@ -266,8 +238,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 .past-exams-toggle i { transition: transform 0.25s ease; }
 .past-exams-toggle[aria-expanded="true"] i { transform: rotate(180deg); }
 .past-exams-list { margin-top: 16px; }
-
-/* ---------- SOFT WHITE NEUMORPHIC EXAM CARDS, FEEDBACK & DIALOGS ---------- */
 .exam-card, .empty-exam-card, .feedback-box, .disclaimer-dialog {
   --sw-bg: #eef3fb;
   --sw-surface: #f5f8ff;
@@ -279,18 +249,13 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   --room: #4338ca;
   --seat: #0d9488;
   --cyan: #0284c7;
-
-  /* Soft White Neumorphic Shadows (Top-Left Crisp White Highlight + Bottom-Right Cool Slate Shadow) */
   --sw-raised-xs: 4px 4px 10px rgba(163, 177, 206, 0.55), -4px -4px 10px #ffffff, inset 1px 1px 1px rgba(255, 255, 255, 0.85);
   --sw-raised-sm: 6px 6px 14px rgba(163, 177, 206, 0.6), -6px -6px 14px #ffffff, inset 1px 1px 1px rgba(255, 255, 255, 0.9);
   --sw-inset: inset 5px 5px 11px rgba(163, 177, 206, 0.58), inset -5px -5px 11px #ffffff;
   --sw-inset-sm: inset 3px 3px 7px rgba(163, 177, 206, 0.52), inset -3px -3px 7px #ffffff;
-
   color: var(--text);
   background: linear-gradient(145deg, #f8fbff 0%, #eaf0fa 100%);
 }
-
-/* Exam Cards (Upcoming & Past) */
 .exam-card, .empty-exam-card {
   position: relative; width: 100%; overflow: hidden;
   border-radius: 30px;
@@ -321,14 +286,11 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   background: linear-gradient(145deg, #f1f5fc 0%, #e4ebf7 100%);
   opacity: 0.94;
 }
-
 .exam-card-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 24px 26px 0; }
 .status-chip { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--soft); }
 .status-chip i { font-size: 12px; }
 .exam-card.is-upcoming .status-chip { color: #0284c7; }
 .exam-date { font-size: 13px; font-weight: 600; color: var(--muted); }
-
-/* Carved Soft White Room & Seat Well */
 .exam-grid-top {
   display: grid; grid-template-columns: 1fr 1fr;
   margin: 18px 24px 0; padding: 22px 8px 24px;
@@ -347,8 +309,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 }
 .cell-room .cell-value { color: var(--room); }
 .cell-seat .cell-value { color: var(--seat); }
-
-/* Ticket Cutout Divider */
 .ticket-divider { position: relative; height: 0; margin: 24px 24px 0; border-top: 2px dashed rgba(148, 163, 184, 0.35); }
 .ticket-divider::before, .ticket-divider::after {
   content: ""; position: absolute; top: -13px;
@@ -357,8 +317,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 }
 .ticket-divider::before { left: -36px; }
 .ticket-divider::after { right: -36px; }
-
-/* Raised Soft White Detail Pills */
 .exam-grid-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 22px 24px 26px; }
 .detail {
   display: flex; align-items: center; gap: 14px; min-width: 0;
@@ -377,7 +335,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 .detail-label { font-size: 11.5px; font-weight: 600; color: var(--soft); }
 .detail-value { font-size: 14.5px; font-weight: 700; color: var(--text); overflow-wrap: anywhere; }
 .detail-sub { font-size: 12px; color: var(--muted); }
-
 .empty-exam-card { padding: 48px 24px; text-align: center; }
 .empty-icon-box {
   width: 68px; height: 68px; margin: 0 auto 18px;
@@ -387,19 +344,14 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 }
 .empty-exam-card h3 { margin-bottom: 8px; font-size: 19px; font-weight: 600; }
 .empty-exam-card p { max-width: 360px; margin: 0 auto; font-size: 13.5px; line-height: 1.6; color: var(--muted); }
-
-
-/* ---------- DISCLAIMER DIALOG (SOFT WHITE NEUMORPHISM) ---------- */
 .disclaimer-dialog {
   max-width: 500px;
   width: calc(100% - 24px);
   border-radius: 30px;
 }
-
 .disclaimer-content {
   padding: 26px 24px 22px;
 }
-
 .disc-modal-header {
   display: flex;
   align-items: center;
@@ -407,7 +359,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   padding-right: 42px;
   margin-bottom: 16px;
 }
-
 .disc-header-icon {
   width: 48px;
   height: 48px;
@@ -420,14 +371,12 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   background: var(--grad);
   box-shadow: 4px 6px 14px rgba(99, 102, 241, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45);
 }
-
 .disc-modal-header h2 {
   margin: 0 0 4px;
   font-size: 20px;
   font-weight: 700;
   color: var(--text);
 }
-
 .disc-subtitle-badge {
   display: inline-flex;
   align-items: center;
@@ -440,8 +389,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   background: var(--sw-well);
   box-shadow: var(--sw-inset-sm);
 }
-
-/* Inset Neumorphic Well Container */
 .disc-body-well {
   max-height: 58vh;
   max-height: 58dvh;
@@ -456,12 +403,9 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   flex-direction: column;
   gap: 12px;
 }
-
 .disc-body-well::-webkit-scrollbar { width: 6px; }
 .disc-body-well::-webkit-scrollbar-track { background: transparent; }
 .disc-body-well::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.25); border-radius: 999px; }
-
-/* Raised Soft White Clause Cards */
 .disc-card-item {
   padding: 14px 16px;
   border-radius: 18px;
@@ -469,12 +413,10 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   box-shadow: var(--sw-raised-xs);
   transition: transform 0.25s ease, box-shadow 0.3s ease;
 }
-
 .disc-highlight-card {
   border-left: 3.5px solid #f59e0b;
   background: linear-gradient(145deg, #ffffff 0%, #f3f7ff 100%);
 }
-
 .disc-card-item h3 {
   display: flex;
   align-items: center;
@@ -484,7 +426,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   font-weight: 700;
   color: var(--text);
 }
-
 .d-icon {
   width: 28px;
   height: 28px;
@@ -497,30 +438,24 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   background: var(--sw-well);
   box-shadow: var(--sw-inset-sm);
 }
-
 .d-icon-warn {
   color: #d97706;
 }
-
 .disc-card-item p {
   margin: 0;
   font-size: 13px;
   line-height: 1.62;
   color: var(--muted);
 }
-
 .disc-card-item strong {
   color: var(--text);
   font-weight: 600;
 }
-
-/* Bottom Dual Action Bar: Back to Home + Feedback */
 .disc-action-bar {
   display: grid;
   grid-template-columns: 1.25fr 1fr;
   gap: 12px;
 }
-
 .disc-btn-home,
 .disc-btn-feedback {
   position: relative;
@@ -538,7 +473,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   cursor: pointer;
   transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, color 0.25s ease;
 }
-
 .disc-btn-home {
   color: #fff;
   background: var(--grad);
@@ -547,7 +481,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 .disc-btn-home:active {
   transform: scale(0.98);
 }
-
 .disc-btn-feedback {
   color: #0f172a;
   background: var(--sw-surface);
@@ -561,7 +494,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   box-shadow: var(--sw-inset-sm);
   transform: translateY(1px);
 }
-
 @media (hover: hover) {
   .disc-card-item:hover {
     transform: translateY(-2px);
@@ -577,8 +509,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
     box-shadow: 7px 9px 18px rgba(148, 163, 196, 0.68), -6px -6px 14px #ffffff;
   }
 }
-
-/* Mobile Friendly Adjustments */
 @media (max-width: 480px) {
   .disclaimer-dialog {
     width: calc(100% - 18px);
@@ -619,7 +549,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
     font-size: 13.5px;
   }
 }
-/* ---------- SOFT WHITE FEEDBACK MODAL & DIALOGS ---------- */
 .disclaimer-dialog {
   width: calc(100% - 32px); max-width: 460px; margin: auto; padding: 0;
   border: none; border-radius: 28px;
@@ -630,7 +559,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 .dialog-content h2 { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 19px; color: var(--text); }
 .dialog-content h2 i { color: #0284c7; }
 .dialog-content p { margin-bottom: 20px; font-size: 13px; line-height: 1.65; color: var(--muted); }
-
 .close-dialog, .feedback-close {
   position: absolute; top: 18px; right: 18px;
   width: 38px; height: 38px; display: grid; place-items: center;
@@ -644,7 +572,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   box-shadow: 5px 5px 12px rgba(163, 177, 206, 0.75), -4px -4px 10px #ffffff, 0 0 14px rgba(2, 132, 199, 0.25);
 }
 .close-dialog:active, .feedback-close:active { box-shadow: var(--sw-inset-sm); }
-
 .feedback-modal {
   display: none; position: fixed; inset: 0; z-index: 9999;
   padding: 20px; align-items: center; justify-content: center;
@@ -652,7 +579,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 }
 .feedback-modal.show { display: flex; animation: fbFade 0.25s ease; }
 @keyframes fbFade { from { opacity: 0; } }
-
 .feedback-box {
   position: relative; width: 100%; max-width: 490px;
   max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px);
@@ -662,7 +588,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   animation: fbPop 0.4s cubic-bezier(0.2, 1.1, 0.3, 1);
 }
 @keyframes fbPop { from { opacity: 0; transform: translateY(24px) scale(0.95); } }
-
 .feedback-header {
   display: flex; align-items: flex-start; gap: 16px;
   margin-bottom: 24px; padding: 0 48px 18px 0;
@@ -676,7 +601,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 }
 .feedback-header h2 { margin-bottom: 3px; font-size: 21px; font-weight: 700; color: var(--text); }
 .feedback-header p { font-size: 13.5px; line-height: 1.4; color: var(--muted); }
-
 .form-section { margin-bottom: 22px; }
 .section-label-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
 .feedback-box label, .field-label { display: block; margin-bottom: 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); }
@@ -685,8 +609,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 .rating-status-text { font-size: 13px; font-weight: 700; white-space: nowrap; color: #0284c7; }
 .rating-status-text.swap { animation: labelSwap 0.3s ease; }
 @keyframes labelSwap { from { opacity: 0; transform: translateY(-5px); } }
-
-/* Carved Soft White Star Rating Well */
 .star-rating-container {
   width: 100%; height: 64px;
   display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -703,8 +625,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 .star-btn.hover, .star-btn.active { color: var(--star); filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.55)); }
 .star-btn.pop { animation: starPop 0.45s cubic-bezier(0.3, 1.5, 0.5, 1) backwards; animation-delay: var(--d, 0ms); }
 @keyframes starPop { 0% { transform: scale(1); } 40% { transform: scale(1.5) rotate(-14deg); } 100% { transform: scale(1); } }
-
-/* Raised Soft White Yes/No Buttons */
 .acc-group { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .acc-btn {
   height: 54px; display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -721,8 +641,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 @keyframes accPop { 40% { transform: scale(1.06); } }
 .acc-hint { max-height: 0; overflow: hidden; opacity: 0; font-size: 12.5px; color: #dc2626; transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease; }
 .acc-hint.show { max-height: 40px; opacity: 1; margin-top: 10px; }
-
-/* Carved Soft White Input & Textarea Wells */
 .inset-input-box {
   width: 100%; padding: 14px 18px;
   border: 1px solid transparent; border-radius: 18px;
@@ -741,7 +659,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   font-family: inherit; font-size: 14.5px;
 }
 .inset-input-box ::placeholder { color: var(--soft); }
-
 .feedback-submit {
   position: relative; overflow: hidden;
   width: 100%; height: 56px; margin-top: 8px;
@@ -762,7 +679,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 .feedback-submit.is-loading::before { content: ""; width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, 0.4); border-top-color: #fff; border-radius: 50%; animation: fbSpin 0.7s linear infinite; }
 @keyframes fbSpin { to { transform: rotate(360deg); } }
 .feedback-error { min-height: 18px; margin-top: 10px; font-size: 13px; text-align: center; color: #dc2626; }
-
 .feedback-success-view { padding: 20px 10px 6px; text-align: center; }
 .success-icon-box {
   position: relative; width: 88px; height: 88px; margin: 0 auto 20px;
@@ -776,8 +692,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 @keyframes fbRipple { from { transform: scale(1); opacity: 0.6; } to { transform: scale(1.7); opacity: 0; } }
 .feedback-success-view h2 { margin-bottom: 8px; font-size: 21px; font-weight: 700; color: var(--text); }
 .feedback-success-view p { margin-bottom: 24px; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
-
-/* ---------- FOOTER ---------- */
 .disclaimer-text { max-width: 600px; margin: 30px auto 0; padding: 0 8px; text-align: center; font-size: 11.5px; line-height: 1.6; color: var(--soft); }
 .footer { padding: 24px 16px; text-align: center; }
 .developer-card-container {
@@ -810,10 +724,7 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 .text-btn { border: none; background: none; color: var(--cyan); font: inherit; cursor: pointer; padding: 0; }
 .footer a { color: var(--cyan); text-decoration: none; }
 .text-btn:hover, .footer a:hover { text-decoration: underline; }
-
-/* ---------- HOVER EFFECTS & LIGHTING SHADOWS ---------- */
 @media (hover: hover) {
-  /* Dark Outer Cards Hover */
   .student-profile-card:hover,
   .seat-search-card:hover,
   .developer-card-container:hover {
@@ -825,8 +736,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
     box-shadow: var(--neu-hover-sm);
   }
   .feedback-link:hover, .btn-secondary:hover { color: var(--cyan); }
-
-  /* Soft White Exam Cards Hover + Top-Left Lighting */
   .exam-card:hover {
     transform: translateY(-5px);
     box-shadow:
@@ -837,8 +746,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   }
   .exam-card:hover::before { opacity: 1; }
   .exam-card:hover::after { transform: translateX(130%); transition: transform 0.9s ease; }
-
-  /* Soft White Detail Tiles & Yes/No Buttons Hover */
   .detail:hover {
     transform: translateY(-3px);
     box-shadow: 6px 8px 16px rgba(148, 163, 196, 0.65), -5px -5px 12px #ffffff, 0 0 14px rgba(56, 189, 248, 0.18);
@@ -848,7 +755,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
     color: var(--text);
     box-shadow: 7px 9px 18px rgba(148, 163, 196, 0.68), -6px -6px 14px #ffffff;
   }
-
   .btn-primary:hover, .feedback-submit:hover {
     transform: translateY(-2px);
     box-shadow: 0 14px 34px rgba(var(--primary-rgb), 0.55), 0 0 28px rgba(var(--cyan-rgb), 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45);
@@ -856,18 +762,14 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   .btn-primary:hover::after, .feedback-submit:hover::after { transform: translateX(120%); transition: transform 0.7s ease; }
   .feedback-submit:hover i { transform: translate(4px, -4px); }
 }
-
-/* ---------- TERMS & CONDITIONS DIALOG (SOFT WHITE NEUMORPHISM) ---------- */
 .terms-dialog {
   max-width: 600px;
   width: calc(100% - 24px);
   border-radius: 30px;
 }
-
 .terms-content {
   padding: 26px 24px 22px;
 }
-
 .terms-modal-header {
   display: flex;
   align-items: center;
@@ -875,7 +777,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   padding-right: 42px;
   margin-bottom: 16px;
 }
-
 .terms-header-icon {
   width: 48px;
   height: 48px;
@@ -888,14 +789,12 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   background: var(--grad);
   box-shadow: 4px 6px 14px rgba(99, 102, 241, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45);
 }
-
 .terms-modal-header h2 {
   margin: 0 0 4px;
   font-size: 20px;
   font-weight: 700;
   color: var(--text);
 }
-
 .terms-updated-badge {
   display: inline-flex;
   align-items: center;
@@ -908,8 +807,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   background: var(--sw-well);
   box-shadow: var(--sw-inset-sm);
 }
-
-/* Inset Scrollable Well */
 .terms-scroll {
   max-height: 54vh;
   max-height: 54dvh;
@@ -924,20 +821,15 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   flex-direction: column;
   gap: 12px;
 }
-
-/* Custom Subtle Scrollbar */
 .terms-scroll::-webkit-scrollbar { width: 6px; }
 .terms-scroll::-webkit-scrollbar-track { background: transparent; }
 .terms-scroll::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.25); border-radius: 999px; }
-
 .terms-intro {
   margin: 0 2px 4px;
   font-size: 13px;
   line-height: 1.6;
   color: var(--muted);
 }
-
-/* Raised Mini Neumorphic Clause Cards */
 .terms-card-item {
   padding: 14px 16px;
   border-radius: 18px;
@@ -945,7 +837,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   box-shadow: var(--sw-raised-xs);
   transition: transform 0.25s ease, box-shadow 0.3s ease;
 }
-
 .terms-card-item h3 {
   display: flex;
   align-items: center;
@@ -955,7 +846,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   font-weight: 700;
   color: var(--text);
 }
-
 .t-icon {
   width: 28px;
   height: 28px;
@@ -968,7 +858,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   background: var(--sw-well);
   box-shadow: var(--sw-inset-sm);
 }
-
 .terms-card-item p {
   margin: 0 0 8px;
   font-size: 13px;
@@ -976,7 +865,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   color: var(--muted);
 }
 .terms-card-item p:last-child { margin-bottom: 0; }
-
 .terms-card-item ul {
   margin: 6px 0 2px 18px;
 }
@@ -986,8 +874,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   line-height: 1.6;
   color: var(--muted);
 }
-
-/* Highlighted Email Pill + Toggle Copy Button */
 .terms-email-box {
   margin-top: 10px;
   padding: 8px 10px 8px 14px;
@@ -1001,7 +887,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   border: 1px solid rgba(99, 102, 241, 0.25);
   box-shadow: var(--sw-inset-sm);
 }
-
 .terms-email-link {
   display: inline-flex;
   align-items: center;
@@ -1020,7 +905,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 .terms-email-link:hover {
   text-decoration: underline;
 }
-
 .terms-copy-btn {
   display: inline-flex;
   align-items: center;
@@ -1045,14 +929,11 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   background: linear-gradient(135deg, #10b981, #059669);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
 }
-
-/* Bottom Dual Action Bar: Back to Home + Feedback */
 .terms-action-bar {
   display: grid;
   grid-template-columns: 1.25fr 1fr;
   gap: 12px;
 }
-
 .terms-btn-home,
 .terms-btn-feedback {
   position: relative;
@@ -1070,7 +951,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   cursor: pointer;
   transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, color 0.25s ease;
 }
-
 .terms-btn-home {
   color: #fff;
   background: var(--grad);
@@ -1079,7 +959,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
 .terms-btn-home:active {
   transform: scale(0.98);
 }
-
 .terms-btn-feedback {
   color: #0f172a;
   background: var(--sw-surface);
@@ -1093,7 +972,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   box-shadow: var(--sw-inset-sm);
   transform: translateY(1px);
 }
-
 @media (hover: hover) {
   .terms-card-item:hover {
     transform: translateY(-2px);
@@ -1113,8 +991,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
     box-shadow: 7px 9px 18px rgba(148, 163, 196, 0.68), -6px -6px 14px #ffffff;
   }
 }
-
-/* Mobile Friendly Adjustments */
 @media (max-width: 480px) {
   .terms-dialog {
     width: calc(100% - 18px);
@@ -1166,7 +1042,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
     font-size: 13.5px;
   }
 }
-/* ---------- RESPONSIVE ADJUSTMENTS ---------- */
 @media (max-width: 480px), (max-height: 720px) {
   .feedback-modal { padding: 12px; }
   .feedback-box { padding: 18px 16px 16px; border-radius: 22px; }
@@ -1214,12 +1089,10 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   .feedback-link { padding: 8px 12px; }
   .seat-search-card { padding: 24px 18px; }
 }
-
 @media (max-width: 640px) {
   .student-profile-card { flex-wrap: wrap; }
   .student-admission-tag { width: 100%; justify-content: center; }
 }
-
 @media (max-width: 560px) {
   .exam-card-header { padding: 18px 18px 0; }
   .exam-grid-top { margin: 14px 16px 0; padding: 18px 4px 20px; }
@@ -1228,7 +1101,6 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   .ticket-divider::before { left: -28px; }
   .ticket-divider::after { right: -28px; }
 }
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
@@ -1239,13 +1111,11 @@ h1, h2, h3, .brand-name, .student-name { font-family: var(--font-head); letter-s
   gap: 14px;
   margin-bottom: 32px;
 }
-
 @media (max-width: 480px) {
   .status-indicators {
     width: 100%;
     gap: 8px;
   }
-
   .badge-chip {
     padding: 8px 12px;
     gap: 6px;
